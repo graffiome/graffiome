@@ -1,12 +1,14 @@
 # Project Name
 
-> Pithy project description
+> A lighthearted chrome extensions to personalize the web.
 
 ## Team
 
-  - __Product Owner__: teamMember
-  - __Scrum Master__: teamMember
-  - __Development Team Members__: teamMember, teamMember
+  - __Product Owner__: koziscool
+  - __Scrum Master__: wettowelreactor
+  - __Porject Manager__: mrblueblue
+  - __Technical Lead__: rmagee88
+  - __Development Team Members__: koziscool, mrblueblue, rmagee88, wettowelreactor
 
 ## Table of Contents
 
@@ -20,14 +22,11 @@
 
 ## Usage
 
-> Some usage instructions
+> Install, sign up, deface the web with your friends.
 
 ## Requirements
 
-- Node 0.10.x
-- Redis 2.6.x
-- Postgresql 9.1.x
-- etc
+- TBD
 - etc
 
 ## Development
