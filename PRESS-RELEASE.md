@@ -49,7 +49,7 @@ The web is mostly written by The Man.  Well, now you can stick it to The Man wit
 
 ## Solution ##
 
-We created a nonofficial Google Chrome Extension and combined that with a Firebase database to give control of the web back to its users.
+We created a Google Chrome Extension and combined that with a Firebase database to give control of the web back to its users.
 
 ## Quote from You ##
 
