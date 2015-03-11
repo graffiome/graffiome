@@ -14,31 +14,56 @@ If the press release is more than a page and a half, it is probably too long. Ke
 Oh, and I also like to write press-releases in what I call "Oprah-speak" for mainstream consumer products. Imagine you're sitting on Oprah's couch and have just explained the product to her, and then you listen as she explains it to her audience. That's "Oprah-speak", not "Geek-speak".
 
 Once the project moves into development, the press release can be used as a touchstone; a guiding light. The product team can ask themselves, "Are we building what is in the press release?" If they find they're spending time building things that aren't in the press release (overbuilding), they need to ask themselves why. This keeps product development focused on achieving the customer benefits and not building extraneous stuff that takes longer to build, takes resources to maintain, and doesn't provide real customer benefit (at least not enough to warrant inclusion in the press release).
+ 
+/////////////
+
+  > Name the product in a way the reader (i.e. your target customers) will understand.
+  > Describe who the market for the product is and what benefit they get. One sentence only underneath the title.
+  > Give a summary of the product and the benefit. Assume the reader will not read anything else so make this paragraph good.
+  > Describe the problem your product solves.
+  > Describe how your product elegantly solves the problem.
+  > A quote from a spokesperson in your company.
+  > Describe how easy it is to get started.
+  > Wrap it up and give pointers where the reader should go next.
+  > Provide a quote from a hypothetical customer that describes how they experienced the benefit.
+
+
+
  -->
  
 ## Heading ##
-  > Name the product in a way the reader (i.e. your target customers) will understand.
+
+Graffiome
 
 ## Sub-Heading ##
-  > Describe who the market for the product is and what benefit they get. One sentence only underneath the title.
+
+A lighthearted Chrome Extension to personalize the web
 
 ## Summary ##
-  > Give a summary of the product and the benefit. Assume the reader will not read anything else so make this paragraph good.
+
+Graffiome is a web plugin to add your custom content onto pages that you and your friends see.  You and your friends add words or drawings to native web content.  You will also see how others have modified the page, and others will see your graffiti as well.  No cops, no fines, no curfews.  If you don't like what you drew the first time, erase and try again.  
 
 ## Problem ##
-  > Describe the problem your product solves.
+
+The web is mostly written by The Man.  Well, now you can stick it to The Man with Graffiome.  You create your content on top of already existing webpages, and share it.  Be seroius, whimsical, or comical, put your print on the web.
 
 ## Solution ##
-  > Describe how your product elegantly solves the problem.
+
+We created a nonofficial Google Chrome Extension and combined that with a Firebase database to give control of the web back to its users.
 
 ## Quote from You ##
-  > A quote from a spokesperson in your company.
+
+"The web is too serious.  Who doesn't want to see Bill Belichick with a fake mustache?" - Koz
 
 ## How to Get Started ##
-  > Describe how easy it is to get started.
+
+Go to the web store inside Chrome, download the graffio.me plugin.  Enable the plugin on any page, and draw on top to your heart's content.  
 
 ## Customer Quote ##
-  > Provide a quote from a hypothetical customer that describes how they experienced the benefit.
+
+'Adds variety to a boring web.' - Eric Moss, Toledo
 
 ## Closing and Call to Action ##
-  > Wrap it up and give pointers where the reader should go next.
+
+"Download the extension and show your friends!"
+
