@@ -1,5 +1,5 @@
 'use strict';
-Firebase.enableLogging(true);
+//Firebase.enableLogging(true);
 var f = new Firebase('https://dazzling-heat-2465.firebaseio.com/');
 
 f.transaction(function(curr) {
@@ -15,3 +15,8 @@ f.transaction(function(curr) {
       document.getElementById('contents').innerHTML = s.val();
     });
   });
+
+
+chrome.tabs.query({currentWindow: true, active: true}, function(tabs){
+    console.log(tabs[0].url);
+});
