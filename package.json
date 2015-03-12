@@ -1,0 +1,26 @@
+{
+  "name": "graffiome",
+  "version": "0.0.1",
+  "description": "A lighthearted chrome extensions to personalize the web.",
+  "main": "Chrome Extension",
+  "scripts": {
+    "test": "echo \"Error: no test specified\" && exit 1"
+  },
+  "repository": {
+    "type": "git",
+    "url": "https://github.com/graffiome/graffiome"
+  },
+  "keywords": [
+    "graffiti",
+    "graffiome"
+  ],
+  "author": "",
+  "license": "MIT",
+  "bugs": {
+    "url": "https://github.com/graffiome/graffiome/issues"
+  },
+  "homepage": "https://github.com/graffiome/graffiome",
+  "devDependencies": {
+    "jasmine": "^2.2.1"
+  }
+}
