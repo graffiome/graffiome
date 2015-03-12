@@ -33,8 +33,10 @@
     {
       "matches": ["<all_urls>"],
       "js": [
-        "src/canvas.js"
+        "src/bower_components/jquery/dist/jquery.js",
+        "src/content-scripts/full-page-canvas.min.js",
+        "src/content-scripts/canvas.js"
       ]
     }
-  ],
+  ]
 }
