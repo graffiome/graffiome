@@ -10,14 +10,12 @@ var x = "black",
 
 $(function(){
   
- 
-
   $('<canvas id="can" width="1100" height="1100" style="zIndex=100;position:absolute;top:0;left:0;"></canvas>')
-    .appendTo('body')
     .on('mousemove', function(e){findxy('move', e)})
     .on('mousedown', function(e){findxy('down', e)})
     .on('mouseup', function(e){findxy('up', e)})
     .on('mouseout', function(e){ findxy('out', e)})
+    .appendTo('body')
 
     canvas = document.getElementById('can');
     ctx = canvas.getContext("2d");
@@ -27,8 +25,8 @@ $(function(){
 
 function draw() {
     ctx.beginPath();
-    ctx.moveTo(prevX, prevY);
-    ctx.lineTo(currX, currY);
+    ctx.moveTo(prevX+pageXOffset, prevY+pageYOffset);
+    ctx.lineTo(currX+pageXOffset, currY+pageYOffset);
     ctx.strokeStyle = x;
     ctx.lineWidth = y;
     ctx.stroke();
