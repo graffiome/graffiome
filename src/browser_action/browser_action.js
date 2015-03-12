@@ -2,6 +2,7 @@
 var appStatus = 'Off';
 
 //Firebase.enableLogging(true);
+
 chrome.tabs.query({currentWindow: true, active: true}, function(tabs){
   var currentTab = CryptoJS.SHA1(tabs[0].url);
   var f = new Firebase('https://dazzling-heat-2465.firebaseio.com/web/data/' + currentTab);
@@ -21,6 +22,10 @@ chrome.tabs.query({currentWindow: true, active: true}, function(tabs){
     });
 });
 
+$(function(){
+  $('button.on-off').on('click', toggleAppStatus);
+});
+
 
 var turnOn = function () {
   chrome.extension.sendMessage({action: "On"}, function (response) {
@@ -37,11 +42,11 @@ var turnOff = function () {
 var toggleAppStatus = function() {
   if (appStatus === 'On') {
     appStatus = 'Off';
-    document.querySelector('button.on-off')[0].innerHTML = 'Turn Graffiome On';
+    $('button.on-off')[0].innerHTML = 'Turn Graffiome On';
     turnOff();
   } else {
     appStatus = 'On';
-    document.querySelector('button.on-off')[0].innerHTML = 'Turn Graffiome Off';
+    $('button.on-off')[0].innerHTML = 'Turn Graffiome Off';
     turnOn();
   }
 };
