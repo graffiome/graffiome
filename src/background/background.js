@@ -6,8 +6,17 @@
 
 
 //example of using a message handler from the inject scripts
-chrome.extension.onMessage.addListener(
-  function(request, sender, sendResponse) {
-    chrome.pageAction.show(sender.tab.id);
-    sendResponse();
-  });
+// chrome.extension.onMessage.addListener(
+//   function(request, sender, sendResponse) {
+//     chrome.pageAction.show(sender.tab.id);
+//     sendResponse();
+//   });
+
+chrome.browserAction.onClicked.addListener(function(tab) {
+  // No tabs or host permissions needed!
+  console.log('Turning ' + tab.url + ' on!');
+  chrome.browserAction.setPopup({popup: 'src/browser_action/browser_action.html'});
+  // chrome.tabs.executeScript({
+  //   file: 'src/browser_action/browser_action.js'
+  // });
+});
