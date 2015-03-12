@@ -15,6 +15,9 @@
     "page": "src/background/background.html",
     "persistent": true
   },
+  "permissions": [
+    "activeTab"
+  ],
   "browser_action": {
     "default_icon": "static/graffiome_logo_19.png",
     "default_title": "browser action",
