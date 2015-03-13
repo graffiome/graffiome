@@ -4,7 +4,7 @@ var canvas, ctx, flag = false,
     prevY = 0,
     currY = 0;
 
-var x = "black",
+var x = 'black',
     y = 2;
 
 var overlayPage = {
@@ -14,21 +14,45 @@ var overlayPage = {
   left: 0
 };
 
-$(function(){
-  
-  $('<canvas id="can"></canvas>')
-    .css(overlayPage)
-    .attr('width', document.body.scrollWidth) // sets to max width
-    .attr('height', document.body.scrollHeight) // sets to max height
-    .on('mousemove', function(e){findxy('move', e)})
-    .on('mousedown', function(e){findxy('down', e)})
-    .on('mouseup', function(e){findxy('up', e)})
-    .on('mouseout', function(e){ findxy('out', e)})
-    .appendTo('body')
+var toggle = 'off';
 
-  canvas = document.getElementById('can');
-  ctx = canvas.getContext("2d");
-})
+chrome.runtime.onMessage.addListener(
+  function (request, sender, sendResponse) {
+   if (request.toggle === 'off') {
+      toggleCanvasOff();
+      toggle = 'off';
+      sendResponse({confirm:"canvas turned off"})
+   }
+   if (request.toggle === 'on') {
+      toggleCanvasOn();
+      toggle = 'on';
+      sendResponse({confirm:"canvas turned on"})
+   }
+  }
+);
+
+function toggleCanvasOn(){
+  if (toggle === 'off') {
+    $('<canvas id="graffio-canvas"></canvas>')
+      .css(overlayPage)
+      .attr('width', document.body.scrollWidth) // sets to max width
+      .attr('height', document.body.scrollHeight) // sets to max height
+      .on('mousemove', function(e){findxy('move', e)})
+      .on('mousedown', function(e){findxy('down', e)})
+      .on('mouseup', function(e){findxy('up', e)})
+      .on('mouseout', function(e){ findxy('out', e)})
+      .appendTo('body');
+
+    canvas = document.getElementById('graffio-canvas');
+    ctx = canvas.getContext("2d");
+    console.log('canvas injected!');
+  }
+};
+
+function toggleCanvasOff(){
+  $('canvas#graffio-canvas').remove();
+  console.log('canvas removed!');
+};
 
 function draw() {
   ctx.beginPath();
@@ -52,7 +76,7 @@ function findxy(res, e) {
     ctx.fillRect(currX, currY, 2, 2);
     ctx.closePath();
   }
-  if (res == 'up' || res == "out") {
+  if (res == 'up' || res == 'out') {
     flag = false;
   }
   if (res == 'move') {
@@ -65,3 +89,8 @@ function findxy(res, e) {
     }
   }
 }
+
+// utlity function to save serialized canvas data
+function saveCanvas(){
+
+};
