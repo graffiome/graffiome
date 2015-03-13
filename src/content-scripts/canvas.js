@@ -57,6 +57,11 @@ function toggleCanvasOff(){
   console.log('canvas removed!');
 };
 
+// // utlity function to save serialized canvas data
+// function saveCanvas(){
+
+// };
+
 function serializeOut = function() {
   data = ctx.toDataURL();
   localStorage.setItem('OurCanvas', data);
@@ -113,7 +118,3 @@ function findxy(res, e) {
   }
 }
 
-// utlity function to save serialized canvas data
-function saveCanvas(){
-
-};
