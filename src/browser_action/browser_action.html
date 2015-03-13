@@ -1,22 +1,15 @@
 <!doctype html>
+<html ng-app="graffio"  ngcsp>
+  <body>
+    <div id="mainPopup">
+      <h1>Firebase test!</h1>
+      <p>Clicks: <span id="contents">Loading...</span></p>
+    </div>
 
-
-<style type="text/css">
-  #mainPopup {
-    padding: 10px;
-    height: 200px;
-    width: 400px;
-    font-family: Helvetica, Ubuntu, Arial, sans-serif;
-  }
-  h1 {
-    font-size: 2em;
-  }
-</style>
-
-<div id="mainPopup">
-<h1>Firebase test!</h1>
-<p>Clicks: <span id="contents"></span></p>
-</div>
-
-<script type="text/javascript" src="https://cdn.firebase.com/v0/firebase.js"></script>
-<script src="browser_action.js"></script>
+    <script src='https://cdn.firebase.com/js/client/2.2.1/firebase.js'></script>
+    <script src="https://ajax.googleapis.com/ajax/libs/angularjs/1.3.12/angular.min.js"></script>
+    <script src="../libs/sha1.js"></script>
+    <script src="../app/app.js"></script>
+    <script src="browser_action.js"></script>
+  </body>
+</html>
