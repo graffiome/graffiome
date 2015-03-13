@@ -57,9 +57,15 @@ function toggleCanvasOff(){
   console.log('canvas removed!');
 };
 
+/*
+getCopyCanvas could be split into two or more functions that follow this linear process:
+(1) retrieve canvas data
+(2) create new canvas element
+(3) append this canvas to the body with proper styling and attributes
+(4) draw new canvas element according to data retrieved
+*/
 // // utlity function to save serialized canvas data
 // function saveCanvas(){
-
 // };
 
 function serializeOut = function() {
@@ -72,14 +78,24 @@ function serializeIn = function() {
 };
 
 function getCopyCanvas = function() {
-  document.querySelector('#previous').innerHTML = '';
   getStorage('local');
-
   var img = new Image();
   img.src = serializeIn();
+
+  $('<canvas id="graffio-canvas"></canvas>').innerHTML = ''
+  var newCanvas = $('<canvas id="graffio-canvas"></canvas>')
+      .css(overlayPage)
+      .attr('width', document.body.scrollWidth) // sets to max width
+      .attr('height', document.body.scrollHeight) // sets to max height
+      .appendTo('body');
+  var newCtx = newCanvas.getContext('2d');
+
   img.onload = function () {
-  ctx.drawImage(img,0,0);
+    newCtx.drawImage(img,0,0);
+  }
 }
+
+//////////////
 
 
 function draw() {
