@@ -89,3 +89,8 @@ function findxy(res, e) {
     }
   }
 }
+
+// utlity function to save serialized canvas data
+function saveCanvas(){
+
+};
