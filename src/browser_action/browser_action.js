@@ -2,7 +2,7 @@
 //Firebase.enableLogging(true);
 chrome.tabs.query({currentWindow: true, active: true}, function(tabs){
   var currentTab = CryptoJS.SHA1(tabs[0].url);
-  var f = new Firebase('https://dazzling-heat-2465.firebaseio.com/web/data/' + currentTab);
+  var f = new Firebase('https://dazzling-heat-2465.firebaseio.com/web/data/sites/' + currentTab);
 
   f.transaction(function(curr) {
     if (isNaN(parseFloat(curr))) {
