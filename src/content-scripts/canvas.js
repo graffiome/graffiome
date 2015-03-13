@@ -1,3 +1,6 @@
+
+var data;
+
 var canvas, ctx, flag = false,
     prevX = 0,
     currX = 0,
@@ -53,6 +56,26 @@ function toggleCanvasOff(){
   $('canvas#graffio-canvas').remove();
   console.log('canvas removed!');
 };
+
+function serializeOut = function() {
+  data = ctx.toDataURL();
+  localStorage.setItem('OurCanvas', data);
+};
+
+function serializeIn = function() {
+  return storage.getItem('OurCanvas');
+};
+
+function getCopyCanvas = function() {
+  document.querySelector('#previous').innerHTML = '';
+  getStorage('local');
+
+  var img = new Image();
+  img.src = serializeIn();
+  img.onload = function () {
+  ctx.drawImage(img,0,0);
+}
+
 
 function draw() {
   ctx.beginPath();
