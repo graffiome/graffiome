@@ -14,9 +14,19 @@ var overlayPage = {
   left: 0
 };
 
-$(function(){
-  
-  $('<canvas id="can"></canvas>')
+chrome.runtime.onMessage.addListener(
+  function (request, sender, sendResponse) {
+   if (request.toggle === 'off') {
+      toggleCanvasOff();
+   }
+   if (request.toggle === 'on') {
+      toggleCanvasOn();
+   }
+  }
+);
+
+function toggleCanvasOn(){
+  $('<canvas id="graffio-canvas"></canvas>')
     .css(overlayPage)
     .attr('width', document.body.scrollWidth) // sets to max width
     .attr('height', document.body.scrollHeight) // sets to max height
@@ -26,9 +36,15 @@ $(function(){
     .on('mouseout', function(e){ findxy('out', e)})
     .appendTo('body')
 
-  canvas = document.getElementById('can');
+  canvas = document.getElementById('graffio-canvas');
   ctx = canvas.getContext("2d");
-})
+  console.log('canvas injected!')
+};
+
+function toggleCanvasOff(){
+  $('canvas#graffio-canvas').remove();
+  console.log('canvas removed!')
+};
 
 function draw() {
   ctx.beginPath();
