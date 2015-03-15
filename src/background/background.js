@@ -1,22 +1,10 @@
-// if you checked "fancy-settings" in extensionizr.com, uncomment this lines
-
-// var settings = new Store("settings", {
-//     "sample_setting": "This is how you use Store.js to remember values"
-// });
-
-
-//example of using a message handler from the inject scripts
-// chrome.extension.onMessage.addListener(
-//   function(request, sender, sendResponse) {
-//     chrome.pageAction.show(sender.tab.id);
-//     sendResponse();
-//   });
 'use strict';
-// chrome.browserAction.onClicked.addListener(function(tab) {
-//   // No tabs or host permissions needed!
-//   console.log('Turning ' + tab.url + ' on!');
-//   chrome.browserAction.setPopup({popup: 'src/browser_action/browser_action.html'});
-//   // chrome.tabs.executeScript({
-//   //   file: 'src/browser_action/browser_action.js'
-//   // });
-// });
+var appState = 'off';
+
+chrome.extension.onMessage.addListener(function(request,sender,sendResponse) {
+  if(request.action === 'Get App State') {
+    sendResponse({state: appState});        
+  } else if (request.action === 'Set App State') {
+    appState = request.appState;       
+  }
+});

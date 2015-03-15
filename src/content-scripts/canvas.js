@@ -23,10 +23,12 @@ chrome.runtime.onMessage.addListener(
       toggle = 'off';
       sendResponse({confirm:"canvas turned off"})
    }
-   if (request.toggle === 'on') {
+   else if (request.toggle === 'on') {
       toggleCanvasOn();
       toggle = 'on';
       sendResponse({confirm:"canvas turned on"})
+   } else if (request.getStatus === true) {
+    sendResponse({status:toggle});
    }
   }
 );
