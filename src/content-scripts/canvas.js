@@ -1,5 +1,4 @@
-
-
+'use strict';
 var canvas, ctx, flag = false,
     prevX = 0,
     currX = 0,
@@ -20,16 +19,18 @@ var toggle = 'off';
 
 chrome.runtime.onMessage.addListener(
   function (request, sender, sendResponse) {
-   if (request.toggle === 'off') {
-      toggleCanvasOff();
-      toggle = 'off';
-      sendResponse({confirm:"canvas turned off"})
-   }
-   if (request.toggle === 'on') {
-      toggleCanvasOn();
-      toggle = 'on';
-      sendResponse({confirm:"canvas turned on"})
-   }
+    console.log('message:', request);
+    if (request.toggle === 'off') {
+        toggleCanvasOff();
+        toggle = 'off';
+        sendResponse({confirm:'canvas turned off'});
+    } else if (request.toggle === 'on') {
+        toggleCanvasOn();
+        toggle = 'on';
+        sendResponse({confirm:'canvas turned on'});
+    } else if (request.getStatus === true) {
+      sendResponse({status:toggle});
+    }
   }
 );
 
@@ -56,16 +57,16 @@ function toggleCanvasOff(){
   console.log('canvas removed!');
 };
 
-function serializeOut = function() {
+var serializeOut = function() {
   var data = ctx.toDataURL();
   localStorage.setItem('OurCanvas', data);
 };
 
-function serializeIn = function() {
+var serializeIn = function() {
   return storage.getItem('OurCanvas');
 };
 
-function getCopyCanvas = function() {
+var getCopyCanvas = function() {
   getStorage('local');
   var img = new Image();
   img.src = serializeIn();
@@ -82,9 +83,6 @@ function getCopyCanvas = function() {
     newCtx.drawImage(img,0,0);
   }
 }
-
-////////////// check this out
-
 
 function draw() {
   ctx.beginPath();
@@ -121,4 +119,3 @@ function findxy(res, e) {
     }
   }
 }
-
