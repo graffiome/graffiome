@@ -1,4 +1,5 @@
-'use strict';
+
+
 var canvas, ctx, flag = false,
     prevX = 0,
     currX = 0,
@@ -19,18 +20,16 @@ var toggle = 'off';
 
 chrome.runtime.onMessage.addListener(
   function (request, sender, sendResponse) {
-    console.log('message:', request);
-    if (request.toggle === 'off') {
-        toggleCanvasOff();
-        toggle = 'off';
-        sendResponse({confirm:'canvas turned off'});
-    } else if (request.toggle === 'on') {
-        toggleCanvasOn();
-        toggle = 'on';
-        sendResponse({confirm:'canvas turned on'});
-    } else if (request.getStatus === true) {
-      sendResponse({status:toggle});
-    }
+   if (request.toggle === 'off') {
+      toggleCanvasOff();
+      toggle = 'off';
+      sendResponse({confirm:"canvas turned off"})
+   }
+   if (request.toggle === 'on') {
+      toggleCanvasOn();
+      toggle = 'on';
+      sendResponse({confirm:"canvas turned on"})
+   }
   }
 );
 
@@ -56,6 +55,36 @@ function toggleCanvasOff(){
   $('canvas#graffio-canvas').remove();
   console.log('canvas removed!');
 };
+
+function serializeOut = function() {
+  var data = ctx.toDataURL();
+  localStorage.setItem('OurCanvas', data);
+};
+
+function serializeIn = function() {
+  return storage.getItem('OurCanvas');
+};
+
+function getCopyCanvas = function() {
+  getStorage('local');
+  var img = new Image();
+  img.src = serializeIn();
+
+  $('<canvas id="graffio-canvas"></canvas>').innerHTML = ''
+  var newCanvas = $('<canvas id="graffio-canvas"></canvas>')
+      .css(overlayPage)
+      .attr('width', document.body.scrollWidth) // sets to max width
+      .attr('height', document.body.scrollHeight) // sets to max height
+      .appendTo('body');
+  var newCtx = newCanvas.getContext('2d');
+
+  img.onload = function () {
+    newCtx.drawImage(img,0,0);
+  }
+}
+
+////////////// check this out
+
 
 function draw() {
   ctx.beginPath();
@@ -93,7 +122,3 @@ function findxy(res, e) {
   }
 }
 
-// utlity function to save serialized canvas data
-function saveCanvas(){
-
-};
