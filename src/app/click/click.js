@@ -15,13 +15,13 @@ angular.module('graffio.clickController', [])
   var getCurrentTabID = function(callback) {
     chrome.tabs.query( {currentWindow: true, active: true}, function(tabs){
       var currentTabId = tabs[0].id;
-      callback(currentTabId+'');
+      callback(currentTabId);
     });
   };
 
   var getStatus = function(callback) {
     getCurrentTabID(function(tabID) {
-      chrome.extension.sendRequest(tabID, {getStatus: true}, function(res){
+      chrome.tabs.sendMessage(tabID, {getStatus: true}, function(res) {
         callback(res.status, tabID);
       });
     });
@@ -37,11 +37,14 @@ angular.module('graffio.clickController', [])
         msg = 'off';
         $scope.onOffButtonTxt = 'On';
       }
-      chrome.extension.sendRequest(tabID, {toggle: msg}, function(res){
-        console.log(res);
+      chrome.tabs.sendMessage(tabID, {toggle: msg}, function(res){
+        console.log('toggleStatus:', res);
       });
     });
   };
 
-  $scope.onOffButtonTxt = 'On';
+  getStatus(function(res) {
+    $scope.onOffButtonTxt = res.status;
+    console.log('status set');
+  });
 });

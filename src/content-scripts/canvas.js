@@ -1,3 +1,4 @@
+'use strict';
 var canvas, ctx, flag = false,
     prevX = 0,
     currX = 0,
@@ -18,18 +19,18 @@ var toggle = 'off';
 
 chrome.runtime.onMessage.addListener(
   function (request, sender, sendResponse) {
-   if (request.toggle === 'off') {
-      toggleCanvasOff();
-      toggle = 'off';
-      sendResponse({confirm:"canvas turned off"})
-   }
-   else if (request.toggle === 'on') {
-      toggleCanvasOn();
-      toggle = 'on';
-      sendResponse({confirm:"canvas turned on"})
-   } else if (request.getStatus === true) {
-    sendResponse({status:toggle});
-   }
+    console.log('message:', request);
+    if (request.toggle === 'off') {
+        toggleCanvasOff();
+        toggle = 'off';
+        sendResponse({confirm:'canvas turned off'});
+    } else if (request.toggle === 'on') {
+        toggleCanvasOn();
+        toggle = 'on';
+        sendResponse({confirm:'canvas turned on'});
+    } else if (request.getStatus === true) {
+      sendResponse({status:toggle});
+    }
   }
 );
 
