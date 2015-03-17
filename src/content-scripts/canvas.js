@@ -1,32 +1,32 @@
 'use strict';
+
 var canvas, ctx, flag = false,
     prevX = 0,
     currX = 0,
     prevY = 0,
     currY = 0;
 
-var x = 'black',
-    y = 2;
-
-var overlayPage = {
-  zIndex: 100,
-  position: 'absolute',
-  top: 0,
-  left: 0
-};
+var lineColor = 'black',
+    lineWidth = 2;
 
 var toggle = 'off';
 
+var tabUrl = CryptoJS.SHA1(document.URL);
+var ref = new Firebase('https://dazzling-heat-2465.firebaseio.com/web/data/sites/' + tabUrl);
+var userId;
+
 chrome.runtime.onMessage.addListener(
   function (request, sender, sendResponse) {
-    console.log('message:', request);
+    console.log('message:', request, ' from sender: ', sender);
     if (request.toggle === 'off') {
         toggleCanvasOff();
         toggle = 'off';
+        appendPublicCanvas();
         sendResponse({confirm:'canvas turned off'});
     } else if (request.toggle === 'on') {
         toggleCanvasOn();
         toggle = 'on';
+        getFirebaseAuthData();
         sendResponse({confirm:'canvas turned on'});
     } else if (request.getStatus === true) {
       sendResponse({status:toggle});
@@ -34,62 +34,57 @@ chrome.runtime.onMessage.addListener(
   }
 );
 
+function getFirebaseAuthData(){
+  chrome.runtime.sendMessage({action: 'getToken'}, function(response) {
+    if (response.token) {
+      ref.authWithCustomToken(response.token, function(error, result) {
+        if (error) {console.log("Login Failed!", error);} 
+        else {userId=result.uid;}
+      });
+    } else {
+      console.log('no token found');
+    }
+  });
+};
+
 function toggleCanvasOn(){
   if (toggle === 'off') {
     $('<canvas id="graffio-canvas"></canvas>')
-      .css(overlayPage)
-      .attr('width', document.body.scrollWidth) // sets to max width
-      .attr('height', document.body.scrollHeight) // sets to max height
+      .css({zIndex: 100, position: 'absolute', top: 0,left: 0})
+      .attr('width', document.body.scrollWidth)
+      .attr('height', document.body.scrollHeight)
       .on('mousemove', function(e){findxy('move', e)})
-      .on('mousedown', function(e){findxy('down', e)})
-      .on('mouseup', function(e){findxy('up', e)})
+      .on('mousedown', function(e){findxy('down', e);})
+      .on('mouseup', function(e){
+        findxy('up', e); 
+        saveUserCanvas();
+      })
       .on('mouseout', function(e){ findxy('out', e)})
       .appendTo('body');
 
     canvas = document.getElementById('graffio-canvas');
     ctx = canvas.getContext("2d");
-    console.log('canvas injected!');
+    console.log('user canvas injected!');
   }
 };
 
 function toggleCanvasOff(){
   $('canvas#graffio-canvas').remove();
-  console.log('canvas removed!');
+  console.log('user canvas removed!');
 };
 
-var serializeOut = function() {
-  var data = ctx.toDataURL();
-  localStorage.setItem('OurCanvas', data);
+function saveUserCanvas(){
+  console.log('saving user canvas')
+  var data = canvas.toDataURL();
+  ref.child(userId).set(data)
 };
-
-var serializeIn = function() {
-  return storage.getItem('OurCanvas');
-};
-
-var getCopyCanvas = function() {
-  getStorage('local');
-  var img = new Image();
-  img.src = serializeIn();
-
-  $('<canvas id="graffio-canvas"></canvas>').innerHTML = ''
-  var newCanvas = $('<canvas id="graffio-canvas"></canvas>')
-      .css(overlayPage)
-      .attr('width', document.body.scrollWidth) // sets to max width
-      .attr('height', document.body.scrollHeight) // sets to max height
-      .appendTo('body');
-  var newCtx = newCanvas.getContext('2d');
-
-  img.onload = function () {
-    newCtx.drawImage(img,0,0);
-  }
-}
 
 function draw() {
   ctx.beginPath();
   ctx.moveTo(prevX+pageXOffset, prevY+pageYOffset);
   ctx.lineTo(currX+pageXOffset, currY+pageYOffset);
-  ctx.strokeStyle = x;
-  ctx.lineWidth = y;
+  ctx.strokeStyle = lineColor;
+  ctx.lineWidth = lineWidth;
   ctx.stroke();
   ctx.closePath();
 }
@@ -102,7 +97,7 @@ function findxy(res, e) {
     currX = e.clientX - canvas.offsetLeft;
     currY = e.clientY - canvas.offsetTop;
     ctx.beginPath();
-    ctx.fillStyle = x;
+    ctx.fillStyle = lineColor;
     ctx.fillRect(currX, currY, 2, 2);
     ctx.closePath();
   }
