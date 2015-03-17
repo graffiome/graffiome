@@ -2,7 +2,7 @@
 var userToken;
 
 // Listener for messages coming to the background script
-chrome.extension.onMessage.addListener(function(request,sender,sendResponse) {
+chrome.runtime.onMessage.addListener(function(request,sender,sendResponse) {
   // if it's setting the token, change that variable
   if (request.action === 'setToken') {
     console.log('received message with token: ', request.auth);

@@ -1,0 +1,23 @@
+.container {
+  width:300px;
+  height:auto;
+}
+
+img {
+  float:right;
+}
+
+ul {
+  list-style-type: none;
+  padding-left:10px;
+}
+
+label, input {
+    display: inline-block;
+    vertical-align: baseline;
+    width:100px;
+}
+
+button {
+  margin-top:5px;
+}

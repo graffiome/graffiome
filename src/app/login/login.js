@@ -4,7 +4,8 @@ angular.module('graffio.loginController', [])
   $scope.email;
   $scope.password;
   
-  $scope.login = function() {
+  $scope.logIn = function() {
+    console.log('login called!');
     ref.authWithPassword({
       email    : $scope.email,
       password : $scope.password
