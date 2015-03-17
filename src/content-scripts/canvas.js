@@ -19,24 +19,30 @@ chrome.runtime.onMessage.addListener(
   function (request, sender, sendResponse) {
     console.log('message:', request, ' from sender: ', sender);
     if (request.toggle === 'off') {
-        toggleCanvasOff();
+        toggleUserCanvasOff();
         toggle = 'off';
         appendPublicCanvas();
         sendResponse({confirm:'canvas turned off'});
     } else if (request.toggle === 'on') {
-        toggleCanvasOn();
+        toggleUserCanvasOn();
         toggle = 'on';
         getFirebaseAuthData();
         sendResponse({confirm:'canvas turned on'});
     } else if (request.getStatus === true) {
       sendResponse({status:toggle});
+    } else if (request.logout) {
+      removeCanvasAll();
     }
   }
 );
 
 ref.on("value", function(snapshot) {
-  allCanvases = snapshot.val();
-  console.log(allCanvases);
+  var allCanvases = snapshot.val();
+
+  for (var user in allCanvases){
+    var canvasData = allCanvases[user];
+    appendCanvas(canvasData);
+  }
 }, function (errorObject) {
   console.log("The read failed: " + errorObject.code);
 });
@@ -86,18 +92,18 @@ function saveUserCanvas(){
   ref.child(userId).set(data)
 };
 
-function loadPublicCanvas(){
-  
+function removeCanvasAll(){
+ $('canvas').remove();
+};
+
+
+function appenCavnas(data){
 
 };
 
-function appendPublicCanvas(){
+// function redrawCanvas(){
 
-};
-
-function redrawCanvas(){
-
-};
+// };
 
 function draw() {
   ctx.beginPath();
