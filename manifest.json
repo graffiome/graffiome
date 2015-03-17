@@ -34,6 +34,7 @@
       "matches": ["<all_urls>"],
       "js": [
         "src/bower_components/jquery/dist/jquery.js",
+        "src/bower_components/firebase/firebase.js",
         "src/content-scripts/canvas.js"
       ]
     }
