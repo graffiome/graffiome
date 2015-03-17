@@ -1,7 +1,7 @@
 angular.module('graffio', [
   'graffio.signupController',
   'graffio.loginController',
-  'graffio.clickController',
+  'graffio.mainController',
   'ui.router'
 ])
 .config(function($stateProvider, $urlRouterProvider) {
@@ -10,7 +10,7 @@ angular.module('graffio', [
   if (!user) {
     $urlRouterProvider.otherwise("/login");
   } else {
-    $urlRouterProvider.otherwise("/click");
+    $urlRouterProvider.otherwise("/main");
   }
 
   // Now set up the states
@@ -25,10 +25,10 @@ angular.module('graffio', [
       templateUrl: "login/login.html",
       controller: "loginController"
     })
-    .state('click', {
-      url: '/click',
-      templateUrl: "click/click.html",
-      controller: "clickController"
+    .state('main', {
+      url: '/main',
+      templateUrl: "main/main.html",
+      controller: "mainController"
     });
 
   

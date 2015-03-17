@@ -4,8 +4,7 @@ angular.module('graffio.signupController', [])
   $scope.email;
   $scope.password;
 
-
-  $scope.signup = function() {
+  $scope.signUp = function() {
     // firebase creation of new user
     ref.createUser({
       email    : $scope.email,
@@ -27,7 +26,7 @@ angular.module('graffio.signupController', [])
             console.log("Authenticated successfully with payload:", authData);
             // send the token to the background script so it can be accessed by each tab
             chrome.runtime.sendMessage({auth: authData, action: 'setToken'});
-            $state.go('click');
+            $state.go('main');
           }
         });
 

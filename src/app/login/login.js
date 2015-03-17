@@ -4,7 +4,8 @@ angular.module('graffio.loginController', [])
   $scope.email;
   $scope.password;
   
-  $scope.login = function() {
+  $scope.logIn = function() {
+    console.log('login called!');
     ref.authWithPassword({
       email    : $scope.email,
       password : $scope.password
@@ -15,7 +16,7 @@ angular.module('graffio.loginController', [])
         console.log("Authenticated successfully with payload:", authData);
         // send the token to the background script so it can be accessed by each tab
         chrome.runtime.sendMessage({auth: authData, action: 'setToken'});
-        $state.go('click');
+        $state.go('main');
       }
     });
   };
