@@ -36,16 +36,9 @@ chrome.runtime.onMessage.addListener(
   }
 );
 
-ref.on("value", function(snapshot) {
-  var allCanvases = snapshot.val();
-
-  for (var user in allCanvases){
-    var canvasData = allCanvases[user];
-    appendCanvas(canvasData);
-  }
-}, function (errorObject) {
-  console.log("The read failed: " + errorObject.code);
-});
+ref.on("value", function(snapshot){
+  appendCanvasAll(snapshot);
+})
 
 function getFirebaseAuthData(){
   chrome.runtime.sendMessage({action: 'getToken'}, function(response) {
@@ -96,14 +89,44 @@ function removeCanvasAll(){
  $('canvas').remove();
 };
 
+function appendCanvasAll(snapshot){
+  console.log('hello')
 
-function appenCavnas(data){
+  var allCanvases = snapshot.val();
+  console.log(allCanvases)
+  // for (var user in allCanvases){
 
+    // var data = allCanvases[userId];
+  
+    // $('<canvas id="public"></canvas>')
+    //   .css({position: 'absolute', top: 0, left: 0})
+    //   .attr('width', document.body.scrollWidth)
+    //   .attr('height', document.body.scrollHeight)
+    //   .attr('class', user)
+    //   .appendTo('body');
+
+    // var publicCanvas = document.getElementsByClassName(user);
+    // var context = publicCanvas.getContext('2d');
+    // var imageObj = new Image();
+
+    // imageObj.src = data;
+    
+    // imageObj.onload = function() {
+    //   context.drawImage(this, 0, 0);
+    // };  
+  // }
 };
 
-// function redrawCanvas(){
+function redrawCanvas(canvasElement, data){
+  var context = canvasElement.getContext('2d');
+  var imageObj = new Image();
 
-// };
+  imageObj.src = data;
+  
+  imageObj.onload = function() {
+    context.drawImage(this, 0, 0);
+  };
+};
 
 function draw() {
   ctx.beginPath();
