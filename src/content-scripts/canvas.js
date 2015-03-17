@@ -34,6 +34,13 @@ chrome.runtime.onMessage.addListener(
   }
 );
 
+ref.on("value", function(snapshot) {
+  allCanvases = snapshot.val();
+  console.log(allCanvases);
+}, function (errorObject) {
+  console.log("The read failed: " + errorObject.code);
+});
+
 function getFirebaseAuthData(){
   chrome.runtime.sendMessage({action: 'getToken'}, function(response) {
     if (response.token) {
