@@ -16,6 +16,7 @@ chrome.runtime.onMessage.addListener(function(request,sender,sendResponse) {
       sendResponse({token: userToken});  
     } else {
       console.log('userToken not yet set');
+      sendResponse({token: null}); 
     }
   }
 
