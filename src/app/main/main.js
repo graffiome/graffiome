@@ -1,6 +1,6 @@
 'use strict';
-angular.module('graffio.clickController', [])
-.controller('clickController', function($scope, $state) {
+angular.module('graffio.mainController', [])
+.controller('mainController', function($scope, $state) {
   var ref = new Firebase("https://dazzling-heat-2465.firebaseio.com");
 
   $scope.logout = function() {
