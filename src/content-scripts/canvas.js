@@ -10,6 +10,9 @@ var lineColor = 'black',
     lineWidth = 2;
 
 var toggle = 'off';
+var accessToken;
+var authData;
+
 
 var tabUrl = CryptoJS.SHA1(document.URL);
 var ref = new Firebase('https://dazzling-heat-2465.firebaseio.com/web/data/sites/' + tabUrl);
@@ -26,7 +29,6 @@ chrome.runtime.onMessage.addListener(
         sendResponse({confirm:'canvas turned off'});
     } else if (request.toggle === 'on') {
         toggleCanvasOn();
-
         toggle = 'on';
         getFirebaseAuthData();
         sendResponse({confirm:'canvas turned on'});
@@ -55,6 +57,7 @@ function getFirebaseAuthData(){
     }
   });
 };
+
 
 function toggleUserCanvasOn(){
   if (toggle === 'off') {
