@@ -1,12 +1,13 @@
 'use strict';
+
 var canvas, ctx, flag = false,
     prevX = 0,
     currX = 0,
     prevY = 0,
     currY = 0;
 
-var x = 'black',
-    y = 2;
+var lineColor = 'black',
+    lineWidth = 2;
 
 var overlayPage = {
   zIndex: 100,
@@ -17,15 +18,29 @@ var overlayPage = {
 
 var toggle = 'off';
 
+var testdata;
+
+var user = "testUser3";
+var url = "testUrl3";
+var ref = new Firebase('https://dazzling-heat-2465.firebaseio.com/web/data/sites/' + url);
+
+ref.on("value", function(snapshot) {
+  testdata = snapshot.val();
+}, function (errorObject) {
+  console.log("The read failed: " + errorObject.code);
+});
+
 chrome.runtime.onMessage.addListener(
   function (request, sender, sendResponse) {
     console.log('message:', request);
     if (request.toggle === 'off') {
         toggleCanvasOff();
+        appendPublicCanvas();
         toggle = 'off';
         sendResponse({confirm:'canvas turned off'});
     } else if (request.toggle === 'on') {
         toggleCanvasOn();
+
         toggle = 'on';
         sendResponse({confirm:'canvas turned on'});
     } else if (request.getStatus === true) {
@@ -57,19 +72,18 @@ function toggleCanvasOff(){
   console.log('canvas removed!');
 };
 
-var serializeOut = function() {
-  var data = ctx.toDataURL();
-  localStorage.setItem('OurCanvas', data);
+function saveUserCanvas(){
+  var data = canvas.toDataURL();
+  ref.child(user).set(data)
 };
 
-var serializeIn = function() {
+function loadPublicCanvas(){
   return storage.getItem('OurCanvas');
 };
 
-var getCopyCanvas = function() {
-  getStorage('local');
+function appendPublicCanvas() {
   var img = new Image();
-  img.src = serializeIn();
+  img.src = testdata;
 
   $('<canvas id="graffio-canvas"></canvas>').innerHTML = ''
   var newCanvas = $('<canvas id="graffio-canvas"></canvas>')
@@ -88,8 +102,8 @@ function draw() {
   ctx.beginPath();
   ctx.moveTo(prevX+pageXOffset, prevY+pageYOffset);
   ctx.lineTo(currX+pageXOffset, currY+pageYOffset);
-  ctx.strokeStyle = x;
-  ctx.lineWidth = y;
+  ctx.strokeStyle = lineColor;
+  ctx.lineWidth = lineWidth;
   ctx.stroke();
   ctx.closePath();
 }
@@ -102,7 +116,7 @@ function findxy(res, e) {
     currX = e.clientX - canvas.offsetLeft;
     currY = e.clientY - canvas.offsetTop;
     ctx.beginPath();
-    ctx.fillStyle = x;
+    ctx.fillStyle = lineColor;
     ctx.fillRect(currX, currY, 2, 2);
     ctx.closePath();
   }
@@ -116,6 +130,7 @@ function findxy(res, e) {
       currX = e.clientX - canvas.offsetLeft;
       currY = e.clientY - canvas.offsetTop;
       draw();
+      saveUserCanvas()
     }
   }
 }
