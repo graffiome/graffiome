@@ -57,6 +57,33 @@ function toggleCanvasOff(){
   console.log('canvas removed!');
 };
 
+var serializeOut = function() {
+  var data = ctx.toDataURL();
+  localStorage.setItem('OurCanvas', data);
+};
+
+var serializeIn = function() {
+  return storage.getItem('OurCanvas');
+};
+
+var getCopyCanvas = function() {
+  getStorage('local');
+  var img = new Image();
+  img.src = serializeIn();
+
+  $('<canvas id="graffio-canvas"></canvas>').innerHTML = ''
+  var newCanvas = $('<canvas id="graffio-canvas"></canvas>')
+      .css(overlayPage)
+      .attr('width', document.body.scrollWidth) // sets to max width
+      .attr('height', document.body.scrollHeight) // sets to max height
+      .appendTo('body');
+  var newCtx = newCanvas.getContext('2d');
+
+  img.onload = function () {
+    newCtx.drawImage(img,0,0);
+  }
+}
+
 function draw() {
   ctx.beginPath();
   ctx.moveTo(prevX+pageXOffset, prevY+pageYOffset);
@@ -92,8 +119,3 @@ function findxy(res, e) {
     }
   }
 }
-
-// utlity function to save serialized canvas data
-function saveCanvas(){
-
-};
