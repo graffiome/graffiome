@@ -35,6 +35,7 @@
       "js": [
         "src/bower_components/jquery/dist/jquery.js",
         "src/bower_components/firebase/firebase.js",
+        "src/libs/sha1.js",
         "src/content-scripts/canvas.js"
       ]
     }

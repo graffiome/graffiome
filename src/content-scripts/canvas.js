@@ -17,24 +17,31 @@ var overlayPage = {
 };
 
 var toggle = 'off';
+var accessToken;
+var authData;
 
-var testdata;
+var userId;
+var tabUrl;
 
-var user = "testUser3";
-var url = "testUrl3";
-var ref = new Firebase('https://dazzling-heat-2465.firebaseio.com/web/data/sites/' + url);
+// var testdata;
 
-ref.on("value", function(snapshot) {
-  testdata = snapshot.val()['testUser3'];
-  appendPublicCanvas();
-  console.log(testdata)
-}, function (errorObject) {
-  console.log("The read failed: " + errorObject.code);
-});
+// var user = "testUser3";
+// var url = "testUrl3";
+// var ref = new Firebase('https://dazzling-heat-2465.firebaseio.com/web/data/sites/' + url);
+
+// ref.on("value", function(snapshot) {
+//   testdata = snapshot.val()['testUser3'];
+//   appendPublicCanvas();
+//   console.log(testdata)
+// }, function (errorObject) {
+//   console.log("The read failed: " + errorObject.code);
+// });
+
+var ref = new Firebase('https://dazzling-heat-2465.firebaseio.com/web/data/sites/');
 
 chrome.runtime.onMessage.addListener(
   function (request, sender, sendResponse) {
-    console.log('message:', request);
+    console.log('message:', request, ' from sender: ', sender);
     if (request.toggle === 'off') {
         toggleCanvasOff();
         appendPublicCanvas();
@@ -50,6 +57,46 @@ chrome.runtime.onMessage.addListener(
     }
   }
 );
+
+function saveUserCanvas(){
+  var data = 'testtest'
+  f.child(user).set(data)
+};
+
+// TODO: clean up callbacks with promises (assigned: Jonathan)
+
+function getAuthData(){
+  console.log('getting authData');
+
+  chrome.runtime.sendMessage({action: 'getToken'}, function(response) {
+
+    if (response.token) {
+      accessToken=response.token;
+      console.log('We gots the tokens! ', accessToken);
+
+      ref.authWithCustomToken(accessToken, function(error, result) {
+        if (error) {
+          console.log("Login Failed!", error);
+        } else {
+          authData=result.auth;
+          userId=result.uid;
+          tabUrl=CryptoJS.SHA1(document.URL);
+
+          var f = new Firebase('https://dazzling-heat-2465.firebaseio.com/web/data/sites/' + tabUrl);
+          f.child(userId).set('testtest')
+
+          console.log(tabUrl);
+
+          console.log("Authenticated successfully with payload:", authData);
+          console.log("Auth expires at:", new Date(result.expires * 1000));
+        }
+      });
+
+    } else {
+      console.log('no token :(')
+    }
+  });
+};
 
 function toggleCanvasOn(){
   if (toggle === 'off') {
@@ -70,6 +117,8 @@ function toggleCanvasOn(){
     canvas = document.getElementById('graffio-canvas');
     ctx = canvas.getContext("2d");
     console.log('canvas injected!');
+
+    getAuthData();
   }
 };
 
