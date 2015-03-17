@@ -86,6 +86,19 @@ function saveUserCanvas(){
   ref.child(userId).set(data)
 };
 
+function loadPublicCanvas(){
+  
+
+};
+
+function appendPublicCanvas(){
+
+};
+
+function redrawCanvas(){
+
+};
+
 function draw() {
   ctx.beginPath();
   ctx.moveTo(prevX+pageXOffset, prevY+pageYOffset);
