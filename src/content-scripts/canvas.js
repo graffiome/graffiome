@@ -20,11 +20,13 @@ chrome.runtime.onMessage.addListener(
     console.log('message:', request, ' from sender: ', sender);
     if (request.toggle === 'off') {
         toggleCanvasOff();
+        appendPublicCanvas();
         toggle = 'off';
         appendPublicCanvas();
         sendResponse({confirm:'canvas turned off'});
     } else if (request.toggle === 'on') {
         toggleCanvasOn();
+
         toggle = 'on';
         getFirebaseAuthData();
         sendResponse({confirm:'canvas turned on'});
@@ -86,17 +88,10 @@ function saveUserCanvas(){
   ref.child(userId).set(data)
 };
 
-function loadPublicCanvas(){
-  
-
-};
 
 function appendPublicCanvas(){
-
-};
-
-function redrawCanvas(){
-
+  var data = canvas.toDataURL();
+  ref.child(user).set(data)
 };
 
 function draw() {
@@ -131,6 +126,7 @@ function findxy(res, e) {
       currX = e.clientX - canvas.offsetLeft;
       currY = e.clientY - canvas.offsetTop;
       draw();
+      saveUserCanvas()
     }
   }
 };
