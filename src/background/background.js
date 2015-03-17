@@ -1,10 +1,22 @@
 'use strict';
-var appState = 'off';
+var userToken;
 
+// Listener for messages coming to the background script
 chrome.extension.onMessage.addListener(function(request,sender,sendResponse) {
-  if(request.action === 'Get App State') {
-    sendResponse({state: appState});        
-  } else if (request.action === 'Set App State') {
-    appState = request.appState;       
+  // if it's setting the token, change that variable
+  if (request.action === 'setToken') {
+    console.log('received message with token: ', request.auth);
+    userToken = request.auth.token;
   }
+
+  // if it's requesting the token, return it
+  if (request.action === 'getToken') {
+    if (userToken) {
+      console.log('responding with userToken');
+      sendResponse({token: userToken});  
+    } else {
+      console.log('userToken not yet set');
+    }
+  }
+
 });

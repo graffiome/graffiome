@@ -13,6 +13,8 @@ angular.module('graffio.loginController', [])
         console.log("Login Failed!", error);
       } else {
         console.log("Authenticated successfully with payload:", authData);
+        // send the token to the background script so it can be accessed by each tab
+        chrome.runtime.sendMessage({auth: authData, action: 'setToken'});
         $state.go('click');
       }
     });
