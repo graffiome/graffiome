@@ -9,48 +9,24 @@ var canvas, ctx, flag = false,
 var lineColor = 'black',
     lineWidth = 2;
 
-var overlayPage = {
-  zIndex: 100,
-  position: 'absolute',
-  top: 0,
-  left: 0
-};
-
 var toggle = 'off';
-var accessToken;
-var authData;
 
+var tabUrl = CryptoJS.SHA1(document.URL);
+var ref = new Firebase('https://dazzling-heat-2465.firebaseio.com/web/data/sites/' + tabUrl);
 var userId;
-var tabUrl;
-
-// var testdata;
-
-// var user = "testUser3";
-// var url = "testUrl3";
-// var ref = new Firebase('https://dazzling-heat-2465.firebaseio.com/web/data/sites/' + url);
-
-// ref.on("value", function(snapshot) {
-//   testdata = snapshot.val()['testUser3'];
-//   appendPublicCanvas();
-//   console.log(testdata)
-// }, function (errorObject) {
-//   console.log("The read failed: " + errorObject.code);
-// });
-
-var ref = new Firebase('https://dazzling-heat-2465.firebaseio.com/web/data/sites/');
 
 chrome.runtime.onMessage.addListener(
   function (request, sender, sendResponse) {
     console.log('message:', request, ' from sender: ', sender);
     if (request.toggle === 'off') {
         toggleCanvasOff();
-        appendPublicCanvas();
         toggle = 'off';
+        appendPublicCanvas();
         sendResponse({confirm:'canvas turned off'});
     } else if (request.toggle === 'on') {
         toggleCanvasOn();
-
         toggle = 'on';
+        getFirebaseAuthData();
         sendResponse({confirm:'canvas turned on'});
     } else if (request.getStatus === true) {
       sendResponse({status:toggle});
@@ -58,42 +34,15 @@ chrome.runtime.onMessage.addListener(
   }
 );
 
-function saveUserCanvas(){
-  var data = 'testtest'
-  f.child(user).set(data)
-};
-
-// TODO: clean up callbacks with promises (assigned: Jonathan)
-
-function getAuthData(){
-  console.log('getting authData');
-
+function getFirebaseAuthData(){
   chrome.runtime.sendMessage({action: 'getToken'}, function(response) {
-
     if (response.token) {
-      accessToken=response.token;
-      console.log('We gots the tokens! ', accessToken);
-
-      ref.authWithCustomToken(accessToken, function(error, result) {
-        if (error) {
-          console.log("Login Failed!", error);
-        } else {
-          authData=result.auth;
-          userId=result.uid;
-          tabUrl=CryptoJS.SHA1(document.URL);
-
-          var f = new Firebase('https://dazzling-heat-2465.firebaseio.com/web/data/sites/' + tabUrl);
-          f.child(userId).set('testtest')
-
-          console.log(tabUrl);
-
-          console.log("Authenticated successfully with payload:", authData);
-          console.log("Auth expires at:", new Date(result.expires * 1000));
-        }
+      ref.authWithCustomToken(response.token, function(error, result) {
+        if (error) {console.log("Login Failed!", error);} 
+        else {userId=result.uid;}
       });
-
     } else {
-      console.log('no token :(')
+      console.log('no token found');
     }
   });
 };
@@ -101,13 +50,12 @@ function getAuthData(){
 function toggleCanvasOn(){
   if (toggle === 'off') {
     $('<canvas id="graffio-canvas"></canvas>')
-      .css(overlayPage)
-      .attr('width', document.body.scrollWidth) // sets to max width
-      .attr('height', document.body.scrollHeight) // sets to max height
+      .css({zIndex: 100, position: 'absolute', top: 0,left: 0})
+      .attr('width', document.body.scrollWidth)
+      .attr('height', document.body.scrollHeight)
       .on('mousemove', function(e){findxy('move', e)})
       .on('mousedown', function(e){findxy('down', e);})
       .on('mouseup', function(e){
-        console.log('up')
         findxy('up', e); 
         saveUserCanvas();
       })
@@ -116,49 +64,19 @@ function toggleCanvasOn(){
 
     canvas = document.getElementById('graffio-canvas');
     ctx = canvas.getContext("2d");
-    console.log('canvas injected!');
-
-    getAuthData();
+    console.log('user canvas injected!');
   }
 };
 
 function toggleCanvasOff(){
   $('canvas#graffio-canvas').remove();
-  console.log('canvas removed!');
+  console.log('user canvas removed!');
 };
 
 function saveUserCanvas(){
+  console.log('saving user canvas')
   var data = canvas.toDataURL();
-  console.log(data)
-  ref.child(user).set(data)
-};
-
-function loadPublicCanvas(){
-  return storage.getItem('OurCanvas');
-};
-
-function appendPublicCanvas() {
-  console.log('append')
-
-  $('<canvas id="public"></canvas>')
-    .css({
-      position: 'absolute',
-      top: 0,
-      left: 0
-    })
-    .attr('width', document.body.scrollWidth) // sets to max width
-    .attr('height', document.body.scrollHeight) // sets to max height
-    .appendTo('body');
-
-  var publicCanvas = document.getElementById('public')
-  var context = publicCanvas.getContext('2d');
-  var imageObj = new Image();
-
-  imageObj.src = testdata;
-  
-  imageObj.onload = function() {
-    context.drawImage(this, 0, 0);
-  };
+  ref.child(userId).set(data)
 };
 
 function draw() {
