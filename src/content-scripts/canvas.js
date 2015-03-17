@@ -65,6 +65,7 @@ function toggleUserCanvasOn(){
       .on('mousemove', function(e){findxy('move', e)})
       .on('mousedown', function(e){findxy('down', e);})
       .on('mouseup', function(e){
+        console.log('up')
         findxy('up', e); 
         saveUserCanvas();
       })
@@ -86,12 +87,6 @@ function saveUserCanvas(){
   console.log('saving user canvas')
   var data = canvas.toDataURL();
   ref.child(userId).set(data)
-};
-
-
-function appendPublicCanvas(){
-  var data = canvas.toDataURL();
-  ref.child(user).set(data)
 };
 
 function draw() {
@@ -126,7 +121,6 @@ function findxy(res, e) {
       currX = e.clientX - canvas.offsetLeft;
       currY = e.clientY - canvas.offsetTop;
       draw();
-      saveUserCanvas()
     }
   }
 };
