@@ -25,7 +25,9 @@ var url = "testUrl3";
 var ref = new Firebase('https://dazzling-heat-2465.firebaseio.com/web/data/sites/' + url);
 
 ref.on("value", function(snapshot) {
-  testdata = snapshot.val();
+  testdata = snapshot.val()['testUser3'];
+  appendPublicCanvas();
+  console.log(testdata)
 }, function (errorObject) {
   console.log("The read failed: " + errorObject.code);
 });
@@ -56,8 +58,12 @@ function toggleCanvasOn(){
       .attr('width', document.body.scrollWidth) // sets to max width
       .attr('height', document.body.scrollHeight) // sets to max height
       .on('mousemove', function(e){findxy('move', e)})
-      .on('mousedown', function(e){findxy('down', e)})
-      .on('mouseup', function(e){findxy('up', e)})
+      .on('mousedown', function(e){findxy('down', e);})
+      .on('mouseup', function(e){
+        console.log('up')
+        findxy('up', e); 
+        saveUserCanvas();
+      })
       .on('mouseout', function(e){ findxy('out', e)})
       .appendTo('body');
 
@@ -74,6 +80,7 @@ function toggleCanvasOff(){
 
 function saveUserCanvas(){
   var data = canvas.toDataURL();
+  console.log(data)
   ref.child(user).set(data)
 };
 
@@ -82,21 +89,28 @@ function loadPublicCanvas(){
 };
 
 function appendPublicCanvas() {
-  var img = new Image();
-  img.src = testdata;
+  console.log('append')
 
-  $('<canvas id="graffio-canvas"></canvas>').innerHTML = ''
-  var newCanvas = $('<canvas id="graffio-canvas"></canvas>')
-      .css(overlayPage)
-      .attr('width', document.body.scrollWidth) // sets to max width
-      .attr('height', document.body.scrollHeight) // sets to max height
-      .appendTo('body');
-  var newCtx = newCanvas.getContext('2d');
+  $('<canvas id="public"></canvas>')
+    .css({
+      position: 'absolute',
+      top: 0,
+      left: 0
+    })
+    .attr('width', document.body.scrollWidth) // sets to max width
+    .attr('height', document.body.scrollHeight) // sets to max height
+    .appendTo('body');
 
-  img.onload = function () {
-    newCtx.drawImage(img,0,0);
-  }
-}
+  var publicCanvas = document.getElementById('public')
+  var context = publicCanvas.getContext('2d');
+  var imageObj = new Image();
+
+  imageObj.src = testdata;
+  
+  imageObj.onload = function() {
+    context.drawImage(this, 0, 0);
+  };
+};
 
 function draw() {
   ctx.beginPath();
@@ -130,7 +144,6 @@ function findxy(res, e) {
       currX = e.clientX - canvas.offsetLeft;
       currY = e.clientY - canvas.offsetTop;
       draw();
-      saveUserCanvas()
     }
   }
 }
