@@ -1,8 +1,22 @@
-<div id="signup">
+<div class="container" id="signup" ng-controller="signupController">
+  <img src="./assets/graffiome_logo_64.png" alt="graffio.me icon"/>
   <h2>Sign Up</h2>
-  Email Address: <input ng-model="email" type="email">
-  Password: <input ng-model="password" type="password">
-  <button ng-click="signup()">Sign Up Now!</button>
-  <br><br>
+  <form name="signup">
+    <ul>
+      <li>
+        <label for="email">Email Address:</label>
+        <input ng-model="email" id="email" type="email" placeholder="test@test.com" required></input>
+      </li>
+      <li>
+        <label for="password">Password:</label>
+        <input ng-model="password" id="password" type="password" placeholder="******" required></input>
+      </li>
+      <li>
+        <button ng-click="signUp()">Sign Up</button>
+      </li>
+    </ul>
+  </form>
+
+  <br>
   <a ui-sref="login">Already a user?  Login here...</a>
 </div>

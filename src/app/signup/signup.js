@@ -4,8 +4,7 @@ angular.module('graffio.signupController', [])
   $scope.email;
   $scope.password;
 
-
-  $scope.signup = function() {
+  $scope.signUp = function() {
     // firebase creation of new user
     ref.createUser({
       email    : $scope.email,
