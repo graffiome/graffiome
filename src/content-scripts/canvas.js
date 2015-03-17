@@ -47,7 +47,7 @@ function getFirebaseAuthData(){
   });
 };
 
-function toggleCanvasOn(){
+function toggleUserCanvasOn(){
   if (toggle === 'off') {
     $('<canvas id="graffio-canvas"></canvas>')
       .css({zIndex: 100, position: 'absolute', top: 0,left: 0})
@@ -68,7 +68,7 @@ function toggleCanvasOn(){
   }
 };
 
-function toggleCanvasOff(){
+function toggleUserCanvasOff(){
   $('canvas#graffio-canvas').remove();
   console.log('user canvas removed!');
 };
@@ -79,6 +79,19 @@ function saveUserCanvas(){
   ref.child(userId).set(data)
 };
 
+function loadPublicCanvas(){
+  
+
+};
+
+function appendPublicCanvas(){
+
+};
+
+function redrawCanvas(){
+
+};
+
 function draw() {
   ctx.beginPath();
   ctx.moveTo(prevX+pageXOffset, prevY+pageYOffset);
@@ -87,7 +100,7 @@ function draw() {
   ctx.lineWidth = lineWidth;
   ctx.stroke();
   ctx.closePath();
-}
+};
 
 function findxy(res, e) { 
   if (res == 'down') {
@@ -113,4 +126,4 @@ function findxy(res, e) {
       draw();
     }
   }
-}
+};
