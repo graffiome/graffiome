@@ -10,9 +10,6 @@ var lineColor = 'black',
     lineWidth = 2;
 
 var toggle = 'off';
-var accessToken;
-var authData;
-
 
 var tabUrl = CryptoJS.SHA1(document.URL);
 var ref = new Firebase('https://dazzling-heat-2465.firebaseio.com/web/data/sites/' + tabUrl);
@@ -23,7 +20,6 @@ chrome.runtime.onMessage.addListener(
     console.log('message:', request, ' from sender: ', sender);
     if (request.toggle === 'off') {
         toggleCanvasOff();
-        appendPublicCanvas();
         toggle = 'off';
         appendPublicCanvas();
         sendResponse({confirm:'canvas turned off'});
@@ -58,7 +54,6 @@ function getFirebaseAuthData(){
   });
 };
 
-
 function toggleUserCanvasOn(){
   if (toggle === 'off') {
     $('<canvas id="graffio-canvas"></canvas>')
@@ -68,7 +63,6 @@ function toggleUserCanvasOn(){
       .on('mousemove', function(e){findxy('move', e)})
       .on('mousedown', function(e){findxy('down', e);})
       .on('mouseup', function(e){
-        console.log('up')
         findxy('up', e); 
         saveUserCanvas();
       })
