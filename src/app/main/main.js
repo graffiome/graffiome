@@ -61,6 +61,7 @@ angular.module('graffio.mainController', [])
     
   // function called when button is pressed by user wishing to toggle the current state
   $scope.toggleStatus = function() {
+
     // figure out what existing state is from the content script
     getStatus(function(status, tabID) {
       // send a message to the tab and also set the current button value to be the opposite
