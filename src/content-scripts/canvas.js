@@ -23,7 +23,7 @@ var getFirebaseAuthData = function(callback){
         if (error){
           console.log('Login Failed!', error);
         } else { 
-          currentUser = result.uid
+          currentUser = result.uid;
           callback();
         }
       });
@@ -151,6 +151,7 @@ var displayPublicCanvasAll = function(){
 
 var toggleUserCanvasOn = function(){
   if ( toggle === 'off' ) {
+    console.log(ref.getAuth())
     ref.once('value', function(snapshot){
       if ( snapshot.val() !== null && snapshot.val().hasOwnProperty(currentUser) ){
         console.log('already exist user data');
