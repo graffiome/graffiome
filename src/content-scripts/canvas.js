@@ -146,7 +146,7 @@ var displayPublicCanvasAll = function(){
   ref.once('value', function(snapshot){
     console.log(currentUser);
     if (showCanvasAll && currentUser !== undefined) {
-      updateCanvasElements(snapshot);
+      updatePublicCanvasElements(snapshot);
     } 
   });
 }
