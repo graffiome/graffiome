@@ -1,7 +1,7 @@
 'use strict';
 angular.module('graffio.mainController', [])
 .controller('mainController', function($scope, $state) {
-  var ref = new Firebase("https://dazzling-heat-2465.firebaseio.com");
+  var ref = new Firebase('https://dazzling-heat-2465.firebaseio.com');
 
   $scope.logout = function() {
     ref.unauth();
@@ -47,7 +47,7 @@ angular.module('graffio.mainController', [])
       } else {
         $scope.onOffButtonTxt = 'Off';
       }
-    })
+    });
   };
 
   // generic send tab message function, telling the content script to change from
@@ -84,7 +84,7 @@ angular.module('graffio.mainController', [])
  
   console.log('initial get status called...');
   // Initiall call to getStatus to figure out what status the page was in last.
-  getStatus(function(status, tabID) {
+  getStatus(function(status) {
     setStatusUi(status);
     console.log('status set');
   });

@@ -20,7 +20,7 @@ var getFirebaseAuthData = function(){
   chrome.runtime.sendMessage({action: 'getToken'}, function(response) {
     if (response.token) {
       ref.authWithCustomToken(response.token, function(error, result) {
-        if (error) { console.log("Login Failed!", error); } 
+        if (error) { console.log('Login Failed!', error); } 
         else { currentUser = result.uid; }
       });
     } else {
@@ -38,21 +38,62 @@ var drawCanvasElement = function(canvasElement, data){
   };
 };
 
-var appendCanvasElement = function(user){
+var saveUserCanvas = function(){
+  var data = canvas.toDataURL();
+  ref.child(currentUser).set(data);
+  console.log('saving user canvas');
+};
 
+var drawLine = function(){
+  ctx.beginPath();
+  ctx.moveTo(prevX + pageXOffset, prevY + pageYOffset);
+  ctx.lineTo(currX + pageXOffset, currY + pageYOffset);
+  ctx.strokeStyle = lineColor;
+  ctx.lineWidth = lineWidth;
+  ctx.stroke();
+  ctx.closePath();
+};
+
+var findxy = function(res, e){ 
+  if (res === 'down') {
+    flag = true;
+    prevX = currX;
+    prevY = currY;
+    currX = e.clientX - canvas.offsetLeft;
+    currY = e.clientY - canvas.offsetTop;
+    ctx.beginPath();
+    ctx.fillStyle = lineColor;
+    ctx.fillRect(currX, currY, 2, 2);
+    ctx.closePath();
+  }
+  if (res === 'up' || res === 'out') {
+    flag = false;
+  }
+  if (res === 'move') {
+    if (flag) {
+      prevX = currX;
+      prevY = currY;
+      currX = e.clientX - canvas.offsetLeft;
+      currY = e.clientY - canvas.offsetTop;
+      drawLine();
+    }
+  }
+};
+
+var appendCanvasElement = function(user){
   // Append User Canvas
   if( user === currentUser ){
     $('<canvas id="graffio-canvas"></canvas>')
       .css({zIndex: 100, position: 'absolute', top: 0,left: 0})
       .attr('width', document.body.scrollWidth)
       .attr('height', document.body.scrollHeight)
-      .on('mousemove', function(e){findxy('move', e)})
+      .on('mousemove', function(e){findxy('move', e);})
       .on('mousedown', function(e){findxy('down', e);})
       .on('mouseup', function(e){
         findxy('up', e); 
         saveUserCanvas();
       })
-      .on('mouseout', function(e){ findxy('out', e)})
+      .on('mouseout', function(e){ findxy('out', e);})
       .appendTo('body');
 
     canvas = document.getElementById('graffio-canvas');
@@ -109,13 +150,6 @@ var toggleUserCanvasOff = function(){
   console.log('user canvas removed!');
 };
 
-var saveUserCanvas = function(){
-  var data = canvas.toDataURL();
-  ref.child(currentUser).set(data);
-  console.log('saving user canvas');
-};
-
-
 var removePublicCanvasAll = function(){
  $('canvas#public').remove();
 };
@@ -123,43 +157,6 @@ var removePublicCanvasAll = function(){
 var removeCanvasAll = function(){
   toggleUserCanvasOff();
   removePublicCanvasAll();
-};
-
-
-var drawLine = function(){
-  ctx.beginPath();
-  ctx.moveTo(prevX+pageXOffset, prevY+pageYOffset);
-  ctx.lineTo(currX+pageXOffset, currY+pageYOffset);
-  ctx.strokeStyle = lineColor;
-  ctx.lineWidth = lineWidth;
-  ctx.stroke();
-  ctx.closePath();
-};
-
-var findxy = function(res, e){ 
-  if (res == 'down') {
-    flag = true;
-    prevX = currX;
-    prevY = currY;
-    currX = e.clientX - canvas.offsetLeft;
-    currY = e.clientY - canvas.offsetTop;
-    ctx.beginPath();
-    ctx.fillStyle = lineColor;
-    ctx.fillRect(currX, currY, 2, 2);
-    ctx.closePath();
-  }
-  if (res == 'up' || res == 'out') {
-    flag = false;
-  }
-  if (res == 'move') {
-    if (flag) {
-      prevX = currX;
-      prevY = currY;
-      currX = e.clientX - canvas.offsetLeft;
-      currY = e.clientY - canvas.offsetTop;
-      drawLine();
-    }
-  }
 };
 
 // Message Handler
@@ -178,7 +175,7 @@ chrome.runtime.onMessage.addListener(
 
     // Initialize toggle status for popup button
     } else if ( request.getStatus === true ){
-      console.log('status')
+      console.log('status');
       sendResponse({status:toggle});
 
     // Logout Messages
@@ -188,19 +185,19 @@ chrome.runtime.onMessage.addListener(
 
     // Show Public Canvases Messages
     } else if ( request.show === 'all' ){
-      showCanvasAll === true;
+      showCanvasAll = true;
     } else if ( request.show === 'none' ){
-       showCanvasAll === false;
+       showCanvasAll = false;
        removePublicCanvasAll();
     }
   }
 );
 
 // Firebase Event Listener 
-ref.on("value", function(snapshot){
+ref.on('value', function(snapshot){
   if (showCanvasAll) {
     updateCanvasElements(snapshot);
   } 
-})
+});
 
 
