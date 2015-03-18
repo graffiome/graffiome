@@ -6,7 +6,7 @@ var canvas, ctx, flag = false,
     prevY = 0,
     currY = 0;
 
-var lineColor = 'black',
+var lineColor = 'red',
     lineWidth = 2;
 
 var toggle = 'off',
