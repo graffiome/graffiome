@@ -6,7 +6,7 @@ var canvas, ctx, flag = false,
     prevY = 0,
     currY = 0;
 
-var lineColor = 'black',
+var lineColor = 'red',
     lineWidth = 2;
 
 var toggle = 'off',
@@ -143,7 +143,6 @@ var updateCanvasElements = function(snapshot){
 };
 
 var toggleUserCanvasOn = function(){
-  console.log(userRef)
   if ( toggle === 'off' ) {
     ref.once('value', function(snapshot){
       if ( snapshot.val() !== null && snapshot.val().hasOwnProperty(currentUser) ){
