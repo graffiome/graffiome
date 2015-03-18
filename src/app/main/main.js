@@ -5,6 +5,11 @@ angular.module('graffio.mainController', [])
 
   $scope.logout = function() {
     ref.unauth();
+    chrome.tabs.query({currentWindow: true, active: true}, function(tabs){
+      chrome.tabs.sendMessage(tabs[0].id, {lougout: true}, function(res){
+        console.log(res);
+      });
+    });
     $state.go('login');
   };
 }).controller('onOffController', function($scope){ 
@@ -13,7 +18,7 @@ angular.module('graffio.mainController', [])
 
   // helper function to determine what the current tab is and perform a callback on that tabID value
   var getCurrentTabID = function(callback) {
-    chrome.tabs.query( {currentWindow: true, active: true}, function(tabs){
+    chrome.tabs.query({currentWindow: true, active: true}, function(tabs){
       var currentTabId = tabs[0].id;
       callback(currentTabId);
     });
