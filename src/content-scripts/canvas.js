@@ -6,7 +6,7 @@ var canvas, ctx, flag = false,
     prevY = 0,
     currY = 0;
 
-var lineColor = 'black',
+var lineColor = 'red',
     lineWidth = 2;
 
 var toggle = 'off',
@@ -16,12 +16,16 @@ var toggle = 'off',
 var tabUrl = CryptoJS.SHA1(document.URL),
     ref = new Firebase('https://dazzling-heat-2465.firebaseio.com/web/data/sites/' + tabUrl);
 
-var getFirebaseAuthData = function(){
+var getFirebaseAuthData = function(callback){
   chrome.runtime.sendMessage({action: 'getToken'}, function(response) {
     if (response.token) {
       ref.authWithCustomToken(response.token, function(error, result) {
-        if (error) { console.log('Login Failed!', error); } 
-        else { currentUser = result.uid; }
+        if (error){
+          console.log('Login Failed!', error);
+        } else { 
+          currentUser = result.uid
+          callback();
+        }
       });
     } else {
       console.log('no token found');
@@ -114,7 +118,7 @@ var appendCanvasElement = function(user){
   }
 };
 
-var updateCanvasElements = function(snapshot){
+var updatePublicCanvasElements = function(snapshot){
   var allCanvases = snapshot.val();
   var data, publicCanvas;
 
@@ -137,10 +141,28 @@ var updateCanvasElements = function(snapshot){
   }
 };
 
+var displayPublicCanvasAll = function(){
+  ref.once('value', function(snapshot){
+    if (showCanvasAll) {
+      updatePublicCanvasElements(snapshot);
+    } 
+  });
+}
+
 var toggleUserCanvasOn = function(){
   if ( toggle === 'off' ) {
-    appendCanvasElement(currentUser);
-    toggle = 'on';
+    ref.once('value', function(snapshot){
+      if ( snapshot.val() !== null && snapshot.val().hasOwnProperty(currentUser) ){
+        console.log('already exist user data');
+        var data = snapshot.val()[currentUser]
+        appendCanvasElement(currentUser);
+        drawCanvasElement(canvas, data);
+      } else {
+        console.log('no existing data');
+        appendCanvasElement(currentUser);
+      }
+      toggle = 'on';
+    }); 
   }
 };
 
@@ -159,6 +181,10 @@ var removeCanvasAll = function(){
   removePublicCanvasAll();
 };
 
+var clearUserCanvas = function(){
+  ctx.clearRectangle(0, 0, canvas.width, canvas.height);
+}
+
 // Message Handler
 chrome.runtime.onMessage.addListener(
   function (request, sender, sendResponse){
@@ -169,13 +195,15 @@ chrome.runtime.onMessage.addListener(
         toggleUserCanvasOff();
         sendResponse({confirm:'canvas turned off'});
     } else if ( request.toggle === 'on' ){
-        toggleUserCanvasOn();
-        getFirebaseAuthData();
-        sendResponse({confirm:'canvas turned on'});
-
+        getFirebaseAuthData(function(){
+          toggleUserCanvasOn(); 
+          sendResponse({confirm:'canvas turned on'});
+        });
+        
     // Initialize toggle status for popup button
     } else if ( request.getStatus === true ){
       console.log('status');
+      displayPublicCanvasAll();
       sendResponse({status:toggle});
 
     // Logout Messages
@@ -189,15 +217,20 @@ chrome.runtime.onMessage.addListener(
     } else if ( request.show === 'none' ){
        showCanvasAll = false;
        removePublicCanvasAll();
+
+    // Clear User Canvas Messages
+    } else if (request.clearCanvas){
+      clearUserCanvas();
     }
   }
 );
 
 // Firebase Event Listener 
 ref.on('value', function(snapshot){
-  if (showCanvasAll) {
-    updateCanvasElements(snapshot);
+  console.log(currentUser);
+  if (showCanvasAll && currentUser !== undefined) {
+    updatePublicCanvasElements(snapshot);
   } 
 });
 
-
+getFirebaseAuthData(displayPublicCanvasAll);
