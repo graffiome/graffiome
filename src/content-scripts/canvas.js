@@ -15,7 +15,6 @@ var toggle = 'off',
 
 var tabUrl = CryptoJS.SHA1(document.URL),
     ref = new Firebase('https://dazzling-heat-2465.firebaseio.com/web/data/sites/' + tabUrl),
-    userRef = new Firebase('https://dazzling-heat-2465.firebaseio.com/web/data/sites/' + tabUrl + '/' + currentUser);
 
 var getFirebaseAuthData = function(callback){
   chrome.runtime.sendMessage({action: 'getToken'}, function(response) {
