@@ -123,7 +123,6 @@ var updatePublicCanvasElements = function(snapshot){
   var data, publicCanvas;
 
   for (var user in allCanvases){
-    console.log(currentUser);
     if ( user !== currentUser ){
       data = allCanvases[user];
 
@@ -144,8 +143,7 @@ var updatePublicCanvasElements = function(snapshot){
 
 var displayPublicCanvasAll = function(){
   ref.once('value', function(snapshot){
-    console.log(currentUser);
-    if (showCanvasAll && currentUser !== undefined) {
+    if (showCanvasAll) {
       updatePublicCanvasElements(snapshot);
     } 
   });
@@ -199,13 +197,13 @@ chrome.runtime.onMessage.addListener(
     } else if ( request.toggle === 'on' ){
         getFirebaseAuthData(function(){
           toggleUserCanvasOn(); 
-          displayPublicCanvasAll();
           sendResponse({confirm:'canvas turned on'});
         });
         
     // Initialize toggle status for popup button
     } else if ( request.getStatus === true ){
       console.log('status');
+      displayPublicCanvasAll();
       sendResponse({status:toggle});
 
     // Logout Messages
@@ -234,3 +232,5 @@ ref.on('value', function(snapshot){
     updatePublicCanvasElements(snapshot);
   } 
 });
+
+getFirebaseAuthData(displayPublicCanvasAll);
