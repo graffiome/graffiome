@@ -118,7 +118,7 @@ var appendCanvasElement = function(user){
   }
 };
 
-var updatePubicCanvasElements = function(snapshot){
+var updatePublicCanvasElements = function(snapshot){
   var allCanvases = snapshot.val();
   var data, publicCanvas;
 
