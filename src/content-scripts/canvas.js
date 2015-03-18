@@ -10,23 +10,14 @@ var lineColor = 'black',
     lineWidth = 2;
 
 var toggle = 'off',
-    showCanvasAll = true,
-    currentUser;
+    showCanvasAll = true;
 
 var tabUrl = CryptoJS.SHA1(document.URL),
     ref = new Firebase('https://dazzling-heat-2465.firebaseio.com/web/data/sites/' + tabUrl);
 
-var getFirebaseAuthData = function(){
-  chrome.runtime.sendMessage({action: 'getToken'}, function(response) {
-    if (response.token) {
-      ref.authWithCustomToken(response.token, function(error, result) {
-        if (error) { console.log('Login Failed!', error); } 
-        else { currentUser = result.uid; }
-      });
-    } else {
-      console.log('no token found');
-    }
-  });
+
+var getCurrentUser = function(){
+  return ref.getAuth() ? ref.getAuth().uid : null;
 };
 
 var drawCanvasElement = function(canvasElement, data){
@@ -40,8 +31,12 @@ var drawCanvasElement = function(canvasElement, data){
 
 var saveUserCanvas = function(){
   var data = canvas.toDataURL();
-  ref.child(currentUser).set(data);
-  console.log('saving user canvas');
+  if (getCurrentUser()){
+    ref.child(getCurrentUser()).set(data);
+    console.log('saving user canvas');
+  } else {
+    console.log('failed to save canvas');
+  }
 };
 
 var drawLine = function(){
@@ -82,7 +77,7 @@ var findxy = function(res, e){
 
 var appendCanvasElement = function(user){
   // Append User Canvas
-  if( user === currentUser ){
+  if( user === getCurrentUser() ){
     $('<canvas id="graffio-canvas"></canvas>')
       .css({zIndex: 100, position: 'absolute', top: 0,left: 0})
       .attr('width', document.body.scrollWidth)
@@ -119,7 +114,7 @@ var updateCanvasElements = function(snapshot){
   var data, publicCanvas;
 
   for (var user in allCanvases){
-    if ( user !== currentUser ){
+    if ( user !== getCurrentUser() ){
       data = allCanvases[user];
 
       // If user's public canvas element already exists, then update
@@ -139,7 +134,7 @@ var updateCanvasElements = function(snapshot){
 
 var toggleUserCanvasOn = function(){
   if ( toggle === 'off' ) {
-    appendCanvasElement(currentUser);
+    appendCanvasElement(getCurrentUser());
     toggle = 'on';
   }
 };
@@ -195,7 +190,7 @@ chrome.runtime.onMessage.addListener(
 
 // Firebase Event Listener 
 ref.on('value', function(snapshot){
-  if (showCanvasAll) {
+  if (ref.getAuth()) {
     updateCanvasElements(snapshot);
   } 
 });
