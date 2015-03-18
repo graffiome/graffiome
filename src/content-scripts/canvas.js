@@ -13,7 +13,7 @@ var toggle = 'off',
     showCanvasAll = true;
 
 var tabUrl = CryptoJS.SHA1(document.URL),
-    ref = new Firebase('https://dazzling-heat-2465.firebaseio.com/web/data/sites/' + tabUrl);
+ref = new Firebase('https://dazzling-heat-2465.firebaseio.com/web/data/sites/' + tabUrl);
 
 
 var getCurrentUser = function(){
