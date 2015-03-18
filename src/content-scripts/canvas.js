@@ -15,6 +15,10 @@ var toggle = 'off',
 
 var tabUrl = CryptoJS.SHA1(document.URL),
     ref = new Firebase('https://dazzling-heat-2465.firebaseio.com/web/data/sites/' + tabUrl),
+<<<<<<< HEAD
+=======
+    userRef = new Firebase('https://dazzling-heat-2465.firebaseio.com/web/data/sites/' + tabUrl + '/' + currentUser);
+>>>>>>> 9b4f17186ee3c4ed996d556368b25aa98757a2fc
 
 var getFirebaseAuthData = function(callback){
   chrome.runtime.sendMessage({action: 'getToken'}, function(response) {
@@ -142,6 +146,7 @@ var updateCanvasElements = function(snapshot){
 };
 
 var toggleUserCanvasOn = function(){
+  console.log(userRef)
   if ( toggle === 'off' ) {
     ref.once('value', function(snapshot){
       if ( snapshot.val() !== null && snapshot.val().hasOwnProperty(currentUser) ){
