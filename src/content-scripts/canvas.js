@@ -227,6 +227,6 @@ chrome.runtime.onMessage.addListener(
 ref.on('value', function(snapshot){
   console.log(currentUser);
   if (showCanvasAll && currentUser !== undefined) {
-    updateCanvasElements(snapshot);
+    updatePublicCanvasElements(snapshot);
   } 
 });
