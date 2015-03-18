@@ -10,35 +10,47 @@ var lineColor = 'black',
     lineWidth = 2;
 
 var toggle = 'off';
+var showCanvasAll = true;
 
 var tabUrl = CryptoJS.SHA1(document.URL);
 var ref = new Firebase('https://dazzling-heat-2465.firebaseio.com/web/data/sites/' + tabUrl);
-var userId;
+var currentUser;
 
+// Message Handler
 chrome.runtime.onMessage.addListener(
   function (request, sender, sendResponse) {
     console.log('message:', request, ' from sender: ', sender);
+
+    // Toggle User Canvas Messages
     if (request.toggle === 'off') {
         toggleUserCanvasOff();
-        toggle = 'off';
-        appendPublicCanvas();
         sendResponse({confirm:'canvas turned off'});
     } else if (request.toggle === 'on') {
         toggleUserCanvasOn();
-        toggle = 'on';
         getFirebaseAuthData();
         sendResponse({confirm:'canvas turned on'});
     } else if (request.getStatus === true) {
       sendResponse({status:toggle});
+
+    // Logout Messages
     } else if (request.logout) {
       removeCanvasAll();
+
+    // Show Public Canvases Messages
+    } else if (request.show === 'all') {
+      showCanvasAll === true;
+    } else if (request.show === 'none') {
+       showCanvasAll === false;
+       removePublicCanvasAll();
     }
   }
 );
 
+// Firebase Event Listener 
 ref.on("value", function(snapshot){
-  console.log("CHANGE EVENT")
-  appendCanvasAll(snapshot);
+  if (showCanvasAll) {
+    updateCanvasElements(snapshot);
+  } 
 })
 
 function getFirebaseAuthData(){
@@ -46,7 +58,7 @@ function getFirebaseAuthData(){
     if (response.token) {
       ref.authWithCustomToken(response.token, function(error, result) {
         if (error) {console.log("Login Failed!", error);} 
-        else {userId=result.uid;}
+        else {currentUser=result.uid;}
       });
     } else {
       console.log('no token found');
@@ -56,6 +68,60 @@ function getFirebaseAuthData(){
 
 function toggleUserCanvasOn(){
   if (toggle === 'off') {
+    appendCanvasElement(currentUser);
+    toggle = 'on';
+  }
+};
+
+function toggleUserCanvasOff(){
+  $('canvas#graffio-canvas').remove();
+  toggle = 'off';
+  console.log('user canvas removed!');
+};
+
+function saveUserCanvas(){
+  console.log('saving user canvas')
+  var data = canvas.toDataURL();
+  ref.child(currentUser).set(data)
+};
+
+function removeCanvasAll(){
+ $('canvas').remove();
+};
+
+function removePublicCanvasAll(){
+ $('canvas#public').remove();
+};
+
+function updateCanvasElements(snapshot){
+  var allCanvases = snapshot.val();
+  var data = allCanvases[user];
+  var publicCanvas;
+
+  for (var user in allCanvases){
+    if ( document.getElementsByClassName(user) >=1 ) {
+      publicCanvas = document.getElementsByClassName(user)[0];
+      drawCanvasElement(publicCanvas, data);
+    } else {
+      appendCanvasElement(user);
+      publicCanvas = document.getElementsByClassName(user)[0];
+      drawCanvasElement(publicCanvas, data);
+    }
+  }
+};
+
+function drawCanvasElement(canvasElement, data){
+  console.log(canvasElement)
+  var context = canvasElement.getContext('2d');
+  var imageObj = new Image();
+  imageObj.src = data;
+  imageObj.onload = function() {
+    context.drawImage(this, 0, 0);
+  };
+};
+
+function appendCanvasElement(user){
+  if( user === currentUser ) {
     $('<canvas id="graffio-canvas"></canvas>')
       .css({zIndex: 100, position: 'absolute', top: 0,left: 0})
       .attr('width', document.body.scrollWidth)
@@ -71,93 +137,21 @@ function toggleUserCanvasOn(){
 
     canvas = document.getElementById('graffio-canvas');
     ctx = canvas.getContext("2d");
+
     console.log('user canvas injected!');
+  } else {
+    $('<canvas id="public"></canvas>')
+      .css({position: 'absolute', top: 0, left: 0})
+      .attr('width', document.body.scrollWidth)
+      .attr('height', document.body.scrollHeight)
+      .attr('class', user)
+      .appendTo('body');
+
+    console.log('public canvas injected!');
   }
-};
-
-function toggleUserCanvasOff(){
-  $('canvas#graffio-canvas').remove();
-  console.log('user canvas removed!');
-};
-
-function saveUserCanvas(){
-  console.log('saving user canvas')
-  var data = canvas.toDataURL();
-  ref.child(userId).set(data)
-};
-
-function removeCanvasAll(){
- $('canvas').remove();
-};
-
-function appendCanvasAll(snapshot){
-  console.log('hello')
-
-  var allCanvases = snapshot.val();
-  for (var user in allCanvases){
-
-    console.log(user)
-    console.log(document.getElementsByClassName(user).length)
-
-    // console.log('user is a ', typeof user, ' and ', user);
-    // console.log('allCanvases is a ', typeof allCanvases, ' and ', allCanvases);
-    // console.log('this is a ', typeof allCanvases[user], ' and ', allCanvases[user]);
-
-    
-    
-    if (document.getElementsByClassName(user).length > 1) {
-      console.log('canvas element already exists')
-
-      var publicCanvas = document.getElementsByClassName(user)[0];
-      var data = allCanvases[user];
-
-      drawCanvas(publicCanvas, data);
-
-    } else {
-      console.log(user)
-      $('<canvas id="public"></canvas>')
-        .css({position: 'absolute', top: 0, left: 0})
-        .attr('width', document.body.scrollWidth)
-        .attr('height', document.body.scrollHeight)
-        .attr('class', user)
-        .appendTo('body');
-
-      var data = allCanvases[user];
-      console.log(data)
-      var publicCanvas = document.getElementsByClassName(user)[0];
-      console.log(publicCanvas)
-      var context = publicCanvas.getContext('2d');
-      var imageObj = new Image();
-
-      imageObj.src = data;
-      
-      imageObj.onload = function() {
-        context.drawImage(this, 0, 0);
-      };   
-    }
-
-  }
-};
-
-function drawCanvas(canvasElement, data){
-  var context = canvasElement.getContext('2d');
-  var imageObj = new Image();
-  imageObj.src = data;
-  imageObj.onload = function() {
-    context.drawImage(this, 0, 0);
-  };
-};
-
-function appendCanvasElement(user){
-  $('<canvas id="public"></canvas>')
-    .css({position: 'absolute', top: 0, left: 0})
-    .attr('width', document.body.scrollWidth)
-    .attr('height', document.body.scrollHeight)
-    .attr('class', user)
-    .appendTo('body');
 }
 
-function draw() {
+function drawLine() {
   ctx.beginPath();
   ctx.moveTo(prevX+pageXOffset, prevY+pageYOffset);
   ctx.lineTo(currX+pageXOffset, currY+pageYOffset);
@@ -188,7 +182,7 @@ function findxy(res, e) {
       prevY = currY;
       currX = e.clientX - canvas.offsetLeft;
       currY = e.clientY - canvas.offsetTop;
-      draw();
+      drawLine();
     }
   }
 };
