@@ -49,6 +49,7 @@ chrome.runtime.onMessage.addListener(
 // Firebase Event Listener 
 ref.on("value", function(snapshot){
   if (showCanvasAll) {
+    console.log('value')
     updateCanvasElements(snapshot);
   } 
 })
@@ -95,17 +96,22 @@ function removePublicCanvasAll(){
 
 function updateCanvasElements(snapshot){
   var allCanvases = snapshot.val();
-  var data = allCanvases[user];
+  var data;
   var publicCanvas;
 
   for (var user in allCanvases){
-    if ( document.getElementsByClassName(user) >=1 ) {
-      publicCanvas = document.getElementsByClassName(user)[0];
-      drawCanvasElement(publicCanvas, data);
-    } else {
-      appendCanvasElement(user);
-      publicCanvas = document.getElementsByClassName(user)[0];
-      drawCanvasElement(publicCanvas, data);
+    console.log(user, currentUser)
+    if ( user !== currentUser ){
+      data = allCanvases[user];
+
+      if ( document.getElementsByClassName(user).length >=1 ) {
+        publicCanvas = document.getElementsByClassName(user)[0];
+        drawCanvasElement(publicCanvas, data);
+      } else {
+        appendCanvasElement(user);
+        publicCanvas = document.getElementsByClassName(user)[0];
+        drawCanvasElement(publicCanvas, data);
+      }
     }
   }
 };
@@ -121,6 +127,7 @@ function drawCanvasElement(canvasElement, data){
 };
 
 function appendCanvasElement(user){
+  console.log(user, currentUser)
   if( user === currentUser ) {
     $('<canvas id="graffio-canvas"></canvas>')
       .css({zIndex: 100, position: 'absolute', top: 0,left: 0})
