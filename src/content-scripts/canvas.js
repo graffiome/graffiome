@@ -20,8 +20,9 @@ var getFirebaseAuthData = function(callback){
   chrome.runtime.sendMessage({action: 'getToken'}, function(response) {
     if (response.token) {
       ref.authWithCustomToken(response.token, function(error, result) {
-        if (error) { console.log('Login Failed!', error); } 
-        else { 
+        if (error){
+          console.log('Login Failed!', error);
+        } else { 
           currentUser = result.uid
           callback();
         }
