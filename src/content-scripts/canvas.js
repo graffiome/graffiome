@@ -183,6 +183,7 @@ chrome.runtime.onMessage.addListener(
 
     // Logout Messages
     } else if (request.logout){
+      console.log('logging out')
       removeCanvasAll();
 
     // Show Public Canvases Messages
