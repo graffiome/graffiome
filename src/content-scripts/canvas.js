@@ -15,7 +15,6 @@ var toggle = 'off',
 var tabUrl = CryptoJS.SHA1(document.URL),
 ref = new Firebase('https://dazzling-heat-2465.firebaseio.com/web/data/sites/' + tabUrl);
 
-
 var getCurrentUser = function(){
   return ref.getAuth() ? ref.getAuth().uid : null;
 };
@@ -133,6 +132,7 @@ var updateCanvasElements = function(snapshot){
 };
 
 var toggleUserCanvasOn = function(){
+  console.log(userRef)
   if ( toggle === 'off' ) {
     appendCanvasElement(getCurrentUser());
     toggle = 'on';
@@ -164,8 +164,9 @@ chrome.runtime.onMessage.addListener(
         toggleUserCanvasOff();
         sendResponse({confirm:'canvas turned off'});
     } else if ( request.toggle === 'on' ){
-        toggleUserCanvasOn();
-        getFirebaseAuthData();
+        getFirebaseAuthData(function(){
+          toggleUserCanvasOn();  
+        });
         sendResponse({confirm:'canvas turned on'});
 
     // Initialize toggle status for popup button
