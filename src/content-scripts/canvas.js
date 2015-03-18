@@ -36,6 +36,11 @@ chrome.runtime.onMessage.addListener(
   }
 );
 
+ref.on("value", function(snapshot){
+  console.log("CHANGE EVENT")
+  appendCanvasAll(snapshot);
+})
+
 function getFirebaseAuthData(){
   chrome.runtime.sendMessage({action: 'getToken'}, function(response) {
     if (response.token) {
@@ -84,6 +89,73 @@ function saveUserCanvas(){
 function removeCanvasAll(){
  $('canvas').remove();
 };
+
+function appendCanvasAll(snapshot){
+  console.log('hello')
+
+  var allCanvases = snapshot.val();
+  for (var user in allCanvases){
+
+    console.log(user)
+    console.log(document.getElementsByClassName(user).length)
+
+    // console.log('user is a ', typeof user, ' and ', user);
+    // console.log('allCanvases is a ', typeof allCanvases, ' and ', allCanvases);
+    // console.log('this is a ', typeof allCanvases[user], ' and ', allCanvases[user]);
+
+    
+    
+    if (document.getElementsByClassName(user).length > 1) {
+      console.log('canvas element already exists')
+
+      var publicCanvas = document.getElementsByClassName(user)[0];
+      var data = allCanvases[user];
+
+      drawCanvas(publicCanvas, data);
+
+    } else {
+      console.log(user)
+      $('<canvas id="public"></canvas>')
+        .css({position: 'absolute', top: 0, left: 0})
+        .attr('width', document.body.scrollWidth)
+        .attr('height', document.body.scrollHeight)
+        .attr('class', user)
+        .appendTo('body');
+
+      var data = allCanvases[user];
+      console.log(data)
+      var publicCanvas = document.getElementsByClassName(user)[0];
+      console.log(publicCanvas)
+      var context = publicCanvas.getContext('2d');
+      var imageObj = new Image();
+
+      imageObj.src = data;
+      
+      imageObj.onload = function() {
+        context.drawImage(this, 0, 0);
+      };   
+    }
+
+  }
+};
+
+function drawCanvas(canvasElement, data){
+  var context = canvasElement.getContext('2d');
+  var imageObj = new Image();
+  imageObj.src = data;
+  imageObj.onload = function() {
+    context.drawImage(this, 0, 0);
+  };
+};
+
+function appendCanvasElement(user){
+  $('<canvas id="public"></canvas>')
+    .css({position: 'absolute', top: 0, left: 0})
+    .attr('width', document.body.scrollWidth)
+    .attr('height', document.body.scrollHeight)
+    .attr('class', user)
+    .appendTo('body');
+}
 
 function draw() {
   ctx.beginPath();
