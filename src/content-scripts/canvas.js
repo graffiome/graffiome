@@ -10,56 +10,18 @@ var lineColor = 'black',
     lineWidth = 2;
 
 var toggle = 'off',
-    showCanvasAll = true;
+    showCanvasAll = true,
+    currentUser;
 
 var tabUrl = CryptoJS.SHA1(document.URL),
     ref = new Firebase('https://dazzling-heat-2465.firebaseio.com/web/data/sites/' + tabUrl);
-    currentUser;
 
-// Message Handler
-chrome.runtime.onMessage.addListener(
-  function (request, sender, sendResponse) {
-    console.log('message:', request, ' from sender: ', sender);
-
-    // Toggle User Canvas Messages
-    if (request.toggle === 'off') {
-        toggleUserCanvasOff();
-        sendResponse({confirm:'canvas turned off'});
-    } else if (request.toggle === 'on') {
-        toggleUserCanvasOn();
-        getFirebaseAuthData();
-        sendResponse({confirm:'canvas turned on'});
-    } else if (request.getStatus === true) {
-      sendResponse({status:toggle});
-
-    // Logout Messages
-    } else if (request.logout) {
-      removeCanvasAll();
-
-    // Show Public Canvases Messages
-    } else if (request.show === 'all') {
-      showCanvasAll === true;
-    } else if (request.show === 'none') {
-       showCanvasAll === false;
-       removePublicCanvasAll();
-    }
-  }
-);
-
-// Firebase Event Listener 
-ref.on("value", function(snapshot){
-  if (showCanvasAll) {
-    console.log('value')
-    updateCanvasElements(snapshot);
-  } 
-})
-
-function getFirebaseAuthData(){
+var getFirebaseAuthData = function(){
   chrome.runtime.sendMessage({action: 'getToken'}, function(response) {
     if (response.token) {
       ref.authWithCustomToken(response.token, function(error, result) {
-        if (error) {console.log("Login Failed!", error);} 
-        else {currentUser=result.uid;}
+        if (error) { console.log("Login Failed!", error); } 
+        else { currentUser = result.uid; }
       });
     } else {
       console.log('no token found');
@@ -67,64 +29,19 @@ function getFirebaseAuthData(){
   });
 };
 
-function toggleUserCanvasOn(){
-  if (toggle === 'off') {
-    appendCanvasElement(currentUser);
-    toggle = 'on';
-  }
-};
-
-function toggleUserCanvasOff(){
-  $('canvas#graffio-canvas').remove();
-  toggle = 'off';
-  console.log('user canvas removed!');
-};
-
-function saveUserCanvas(){
-  console.log('saving user canvas')
-  var data = canvas.toDataURL();
-  ref.child(currentUser).set(data)
-};
-
-function removeCanvasAll(){
- $('canvas').remove();
-};
-
-function removePublicCanvasAll(){
- $('canvas#public').remove();
-};
-
-function updateCanvasElements(snapshot){
-  var allCanvases = snapshot.val();
-  var data, publicCanvas;
-
-  for (var user in allCanvases){
-    if ( user !== currentUser ){
-      data = allCanvases[user];
-
-      if ( document.getElementsByClassName(user).length >=1 ) {
-        publicCanvas = document.getElementsByClassName(user)[0];
-        drawCanvasElement(publicCanvas, data);
-      } else {
-        appendCanvasElement(user);
-        publicCanvas = document.getElementsByClassName(user)[0];
-        drawCanvasElement(publicCanvas, data);
-      }
-    }
-  }
-};
-
-function drawCanvasElement(canvasElement, data){
+var drawCanvasElement = function(canvasElement, data){
   var context = canvasElement.getContext('2d');
   var imageObj = new Image();
   imageObj.src = data;
-  imageObj.onload = function() {
+  imageObj.onload = function(){
     context.drawImage(this, 0, 0);
   };
 };
 
-function appendCanvasElement(user){
-  if( user === currentUser ) {
+var appendCanvasElement = function(user){
+
+  // Append User Canvas
+  if( user === currentUser ){
     $('<canvas id="graffio-canvas"></canvas>')
       .css({zIndex: 100, position: 'absolute', top: 0,left: 0})
       .attr('width', document.body.scrollWidth)
@@ -142,9 +59,11 @@ function appendCanvasElement(user){
     ctx = canvas.getContext("2d");
 
     console.log('user canvas injected!');
+
+  // Append Public Canvas
   } else {
     $('<canvas id="public"></canvas>')
-      .css({position: 'absolute', top: 0, left: 0})
+      .css({position: 'absolute', top: 0, left: 0, 'pointer-events': 'none'})
       .attr('width', document.body.scrollWidth)
       .attr('height', document.body.scrollHeight)
       .attr('class', user)
@@ -152,9 +71,62 @@ function appendCanvasElement(user){
 
     console.log('public canvas injected!');
   }
-}
+};
 
-function drawLine() {
+var updateCanvasElements = function(snapshot){
+  var allCanvases = snapshot.val();
+  var data, publicCanvas;
+
+  for (var user in allCanvases){
+    if ( user !== currentUser ){
+      data = allCanvases[user];
+
+      // If user's public canvas element already exists, then update
+      if ( document.getElementsByClassName(user).length >=1 ) {
+        publicCanvas = document.getElementsByClassName(user)[0];
+        drawCanvasElement(publicCanvas, data);
+
+      // Else, doesn't exist already, then append and reconstruct it
+      } else {
+        appendCanvasElement(user);
+        publicCanvas = document.getElementsByClassName(user)[0];
+        drawCanvasElement(publicCanvas, data);
+      }
+    }
+  }
+};
+
+var toggleUserCanvasOn = function(){
+  if ( toggle === 'off' ) {
+    appendCanvasElement(currentUser);
+    toggle = 'on';
+  }
+};
+
+var toggleUserCanvasOff = function(){
+  $('canvas#graffio-canvas').remove();
+  toggle = 'off';
+  console.log('user canvas removed!');
+};
+
+var saveUserCanvas = function(){
+  var data = canvas.toDataURL();
+  ref.child(currentUser).set(data);
+  console.log('saving user canvas');
+};
+
+
+var removePublicCanvasAll = function(){
+ $('canvas#public').remove();
+};
+
+var removeCanvasAll = function(){
+  toggleUserCanvasOff();
+  removePublicCanvasAll();
+};
+
+
+var drawLine = function(){
   ctx.beginPath();
   ctx.moveTo(prevX+pageXOffset, prevY+pageYOffset);
   ctx.lineTo(currX+pageXOffset, currY+pageYOffset);
@@ -164,7 +136,7 @@ function drawLine() {
   ctx.closePath();
 };
 
-function findxy(res, e) { 
+var findxy = function(res, e){ 
   if (res == 'down') {
     flag = true;
     prevX = currX;
@@ -189,3 +161,45 @@ function findxy(res, e) {
     }
   }
 };
+
+// Message Handler
+chrome.runtime.onMessage.addListener(
+  function (request, sender, sendResponse){
+    console.log('message:', request, ' from sender: ', sender);
+
+    // Toggle User Canvas Messages
+    if ( request.toggle === 'off' ){
+        toggleUserCanvasOff();
+        sendResponse({confirm:'canvas turned off'});
+    } else if ( request.toggle === 'on' ){
+        toggleUserCanvasOn();
+        getFirebaseAuthData();
+        sendResponse({confirm:'canvas turned on'});
+
+    // Initialize toggle status for popup button
+    } else if ( request.getStatus === true ){
+      console.log('status')
+      sendResponse({status:toggle});
+
+    // Logout Messages
+    } else if (request.logout){
+      removeCanvasAll();
+
+    // Show Public Canvases Messages
+    } else if ( request.show === 'all' ){
+      showCanvasAll === true;
+    } else if ( request.show === 'none' ){
+       showCanvasAll === false;
+       removePublicCanvasAll();
+    }
+  }
+);
+
+// Firebase Event Listener 
+ref.on("value", function(snapshot){
+  if (showCanvasAll) {
+    updateCanvasElements(snapshot);
+  } 
+})
+
+
