@@ -132,7 +132,6 @@ var updateCanvasElements = function(snapshot){
 };
 
 var toggleUserCanvasOn = function(){
-  console.log(userRef)
   if ( toggle === 'off' ) {
     appendCanvasElement(getCurrentUser());
     toggle = 'on';
@@ -154,6 +153,10 @@ var removeCanvasAll = function(){
   removePublicCanvasAll();
 };
 
+var clearUserCanvas = function(){
+  ctx.clearRectangle(0, 0, canvas.width, canvas.height);
+}
+
 // Message Handler
 chrome.runtime.onMessage.addListener(
   function (request, sender, sendResponse){
@@ -166,9 +169,9 @@ chrome.runtime.onMessage.addListener(
     } else if ( request.toggle === 'on' ){
         getFirebaseAuthData(function(){
           toggleUserCanvasOn();  
+          sendResponse({confirm:'canvas turned on'});
         });
-        sendResponse({confirm:'canvas turned on'});
-
+        
     // Initialize toggle status for popup button
     } else if ( request.getStatus === true ){
       console.log('status');
@@ -195,5 +198,3 @@ ref.on('value', function(snapshot){
     updateCanvasElements(snapshot);
   } 
 });
-
-
