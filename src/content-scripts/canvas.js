@@ -123,6 +123,7 @@ var updateCanvasElements = function(snapshot){
   var data, publicCanvas;
 
   for (var user in allCanvases){
+    console.log(currentUser);
     if ( user !== currentUser ){
       data = allCanvases[user];
 
@@ -142,10 +143,19 @@ var updateCanvasElements = function(snapshot){
 };
 
 var toggleUserCanvasOn = function(){
-  console.log(userRef)
   if ( toggle === 'off' ) {
-    appendCanvasElement(currentUser);
-    toggle = 'on';
+    ref.once('value', function(snapshot){
+      if ( snapshot.val() !== null && snapshot.val().hasOwnProperty(currentUser) ){
+        console.log('already exist user data');
+        var data = snapshot.val()[currentUser]
+        appendCanvasElement(currentUser);
+        drawCanvasElement(canvas, data);
+      } else {
+        console.log('no existing data');
+        appendCanvasElement(currentUser);
+      }
+      toggle = 'on';
+    }); 
   }
 };
 
@@ -164,6 +174,10 @@ var removeCanvasAll = function(){
   removePublicCanvasAll();
 };
 
+var clearUserCanvas = function(){
+  ctx.clearRectangle(0, 0, canvas.width, canvas.height);
+}
+
 // Message Handler
 chrome.runtime.onMessage.addListener(
   function (request, sender, sendResponse){
@@ -176,9 +190,9 @@ chrome.runtime.onMessage.addListener(
     } else if ( request.toggle === 'on' ){
         getFirebaseAuthData(function(){
           toggleUserCanvasOn();  
+          sendResponse({confirm:'canvas turned on'});
         });
-        sendResponse({confirm:'canvas turned on'});
-
+        
     // Initialize toggle status for popup button
     } else if ( request.getStatus === true ){
       console.log('status');
@@ -201,9 +215,8 @@ chrome.runtime.onMessage.addListener(
 
 // Firebase Event Listener 
 ref.on('value', function(snapshot){
-  if (showCanvasAll) {
+  console.log(currentUser);
+  if (showCanvasAll && currentUser !== undefined) {
     updateCanvasElements(snapshot);
   } 
 });
-
-
