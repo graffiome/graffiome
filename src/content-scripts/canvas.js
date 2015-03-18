@@ -9,12 +9,12 @@ var canvas, ctx, flag = false,
 var lineColor = 'black',
     lineWidth = 2;
 
-var toggle = 'off';
-var showCanvasAll = true;
+var toggle = 'off',
+    showCanvasAll = true;
 
-var tabUrl = CryptoJS.SHA1(document.URL);
-var ref = new Firebase('https://dazzling-heat-2465.firebaseio.com/web/data/sites/' + tabUrl);
-var currentUser;
+var tabUrl = CryptoJS.SHA1(document.URL),
+    ref = new Firebase('https://dazzling-heat-2465.firebaseio.com/web/data/sites/' + tabUrl);
+    currentUser;
 
 // Message Handler
 chrome.runtime.onMessage.addListener(
@@ -96,11 +96,9 @@ function removePublicCanvasAll(){
 
 function updateCanvasElements(snapshot){
   var allCanvases = snapshot.val();
-  var data;
-  var publicCanvas;
+  var data, publicCanvas;
 
   for (var user in allCanvases){
-    console.log(user, currentUser)
     if ( user !== currentUser ){
       data = allCanvases[user];
 
@@ -117,7 +115,6 @@ function updateCanvasElements(snapshot){
 };
 
 function drawCanvasElement(canvasElement, data){
-  console.log(canvasElement)
   var context = canvasElement.getContext('2d');
   var imageObj = new Image();
   imageObj.src = data;
@@ -127,7 +124,6 @@ function drawCanvasElement(canvasElement, data){
 };
 
 function appendCanvasElement(user){
-  console.log(user, currentUser)
   if( user === currentUser ) {
     $('<canvas id="graffio-canvas"></canvas>')
       .css({zIndex: 100, position: 'absolute', top: 0,left: 0})
