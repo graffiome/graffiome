@@ -198,6 +198,10 @@ chrome.runtime.onMessage.addListener(
     } else if ( request.show === 'none' ){
        showCanvasAll = false;
        removePublicCanvasAll();
+
+    // Clear User Canvas Messages
+    } else if (request.clearCanvas){
+      clearUserCanvas();
     }
   }
 );
