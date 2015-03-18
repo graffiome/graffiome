@@ -108,7 +108,7 @@ var appendCanvasElement = function(user){
   }
 };
 
-var updateCanvasElements = function(snapshot){
+var updatePubicCanvasElements = function(snapshot){
   var allCanvases = snapshot.val();
   var data, publicCanvas;
 
@@ -130,6 +130,15 @@ var updateCanvasElements = function(snapshot){
     }
   }
 };
+
+var displayPublicCanvasAll = function(){
+  ref.once('value', function(snapshot){
+    console.log(currentUser);
+    if (showCanvasAll && currentUser !== undefined) {
+      updateCanvasElements(snapshot);
+    } 
+  });
+}
 
 var toggleUserCanvasOn = function(){
   if ( toggle === 'off' ) {
@@ -168,7 +177,8 @@ chrome.runtime.onMessage.addListener(
         sendResponse({confirm:'canvas turned off'});
     } else if ( request.toggle === 'on' ){
         getFirebaseAuthData(function(){
-          toggleUserCanvasOn();  
+          toggleUserCanvasOn(); 
+          displayPublicCanvasAll();
           sendResponse({confirm:'canvas turned on'});
         });
         
