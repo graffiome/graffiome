@@ -14,14 +14,18 @@ var toggle = 'off',
     currentUser;
 
 var tabUrl = CryptoJS.SHA1(document.URL),
-    ref = new Firebase('https://dazzling-heat-2465.firebaseio.com/web/data/sites/' + tabUrl);
+    ref = new Firebase('https://dazzling-heat-2465.firebaseio.com/web/data/sites/' + tabUrl),
+    userRef = new Firebase('https://dazzling-heat-2465.firebaseio.com/web/data/sites/' + tabUrl + '/' + currentUser);
 
-var getFirebaseAuthData = function(){
+var getFirebaseAuthData = function(callback){
   chrome.runtime.sendMessage({action: 'getToken'}, function(response) {
     if (response.token) {
       ref.authWithCustomToken(response.token, function(error, result) {
         if (error) { console.log('Login Failed!', error); } 
-        else { currentUser = result.uid; }
+        else { 
+          currentUser = result.uid
+          callback();
+        }
       });
     } else {
       console.log('no token found');
@@ -138,6 +142,7 @@ var updateCanvasElements = function(snapshot){
 };
 
 var toggleUserCanvasOn = function(){
+  console.log(userRef)
   if ( toggle === 'off' ) {
     appendCanvasElement(currentUser);
     toggle = 'on';
@@ -169,8 +174,9 @@ chrome.runtime.onMessage.addListener(
         toggleUserCanvasOff();
         sendResponse({confirm:'canvas turned off'});
     } else if ( request.toggle === 'on' ){
-        toggleUserCanvasOn();
-        getFirebaseAuthData();
+        getFirebaseAuthData(function(){
+          toggleUserCanvasOn();  
+        });
         sendResponse({confirm:'canvas turned on'});
 
     // Initialize toggle status for popup button
