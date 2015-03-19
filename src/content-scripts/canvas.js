@@ -75,7 +75,7 @@ var turnEditOn = function($canvas){
       saveUserCanvas();
     })
     .on('mouseout', function(e){ findxy('out', e);})
-    .on('click')
+    .on('click');
 
   canvas = document.getElementsByClassName(getCurrentUser())[0];
   ctx = canvas.getContext('2d');
@@ -129,7 +129,7 @@ var removeGraffeoCanvasAll = function(){
 
 var clearUserCanvas = function(){
   ctx.clearRectangle(0, 0, canvas.width, canvas.height);
-}
+};
 
 var userLogout = function() {
   ref.unauth();
@@ -138,7 +138,7 @@ var userLogout = function() {
 };
 
 var userLogin = function(token) {
-  ref.authWithCustomToken(token, function(error, result) {
+  ref.authWithCustomToken(token, function(error) {
     if (error) { 
       console.log('Login Failed!', error); 
     } else {
@@ -147,8 +147,9 @@ var userLogin = function(token) {
         if (getCurrentUser() && allCanvases) {
           for (var user in allCanvases){
             var data = allCanvases[user];
+            var context;
             if (document.getElementsByClassName(user)[0]) {
-              var context = document.getElementsByClassName(user.replace(':',''))[0].getContext('2d');  
+              context = document.getElementsByClassName(user.replace(':',''))[0].getContext('2d');  
             } else {
               appendCanvasElement(user.replace(':',''));
               context = document.getElementsByClassName(user.replace(':',''))[0].getContext('2d');
