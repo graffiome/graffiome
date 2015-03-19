@@ -90,7 +90,7 @@ var appendCanvasElement = function(name){
     .css({position: 'absolute', top: 0, left: 0, 'pointer-events': 'none'})
     .attr('width', document.body.scrollWidth)
     .attr('height', document.body.scrollHeight)
-    .attr('class', name)
+    .attr('class', name.replace(':',''))
     .appendTo('body');
 };
 
@@ -119,11 +119,11 @@ var appendCanvasAll = function(){
 
 var toggleUserCanvasOn = function(){
   if ( toggle === 'off' ) {
-    var userCanvas = $('.simplelogin\\:6');
+    var userCanvas = $('.'+getCurrentUser().replace(':',''));
     console.log(userCanvas)
     if (userCanvas.length === 0){
       appendCanvasElement(getCurrentUser());
-      userCanvas = $('.simplelogin\\:6');
+      userCanvas = $('.'+getCurrentUser().replace(':',''));
       turnEditOn(userCanvas);
     } else {
       turnEditOn(userCanvas);
@@ -133,7 +133,7 @@ var toggleUserCanvasOn = function(){
 };
 
 var toggleUserCanvasOff = function(){
-  var userCanvas = $('.simplelogin\\:6');
+  var userCanvas = $('.'+getCurrentUser().replace(':',''));
   turnEditOff(userCanvas);
   toggle = 'off';
 };
