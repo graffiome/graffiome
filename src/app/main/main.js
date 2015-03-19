@@ -5,11 +5,7 @@ angular.module('graffio.mainController', [])
 
   $scope.logout = function() {
     ref.unauth();
-    chrome.tabs.query({currentWindow: true, active: true}, function(tabs){
-      chrome.tabs.sendMessage(tabs[0].id, {logout: true}, function(res){
-        console.log(res);
-      });
-    });
+    chrome.runtime.sendMessage({action: 'clearToken'});
     $state.go('login');
   };
 }).controller('onOffController', function($scope){ 

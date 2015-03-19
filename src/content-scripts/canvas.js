@@ -11,11 +11,13 @@ var lineColor = 'red',
 
 var toggle = 'off';
 
-var tabUrl = CryptoJS.SHA1(document.URL),
-ref = new Firebase('https://dazzling-heat-2465.firebaseio.com/web/data/sites/' + tabUrl);
+var tabUrl = CryptoJS.SHA1(document.URL);
+
+var ref = new Firebase('https://dazzling-heat-2465.firebaseio.com/web/data/sites/' + tabUrl);
+var onValueChange;
 
 var getCurrentUser = function(){
-  return 'simplelogin:6'
+  return ref.getAuth() ? ref.getAuth().uid : null;
 };
 
 var saveUserCanvas = function(){
@@ -102,21 +104,6 @@ var drawCanvasElement = function(context, data){
   };
 };
 
-var appendCanvasAll = function(){
-  ref.once('value', function(snapshot){
-    var allCanvases = snapshot.val();
-    if ( allCanvases !== null ){
-      for (var user in allCanvases){
-        var data = allCanvases[user];
-        var context;
-        appendCanvasElement(user);
-        context = document.getElementsByClassName(user)[0].getContext('2d');
-        drawCanvasElement(context, data);
-      }
-    }
-  });
-};
-
 var toggleUserCanvasOn = function(){
   if ( toggle === 'off' ) {
     var userCanvas = $('.'+getCurrentUser().replace(':',''));
@@ -146,6 +133,32 @@ var clearUserCanvas = function(){
   ctx.clearRectangle(0, 0, canvas.width, canvas.height);
 }
 
+var userLogout = function() {
+  ref.unauth();
+  ref.off('value', onValueChange);
+  removeGraffeoCanvasAll();
+};
+
+var userLogin = function(token) {
+  ref.authWithCustomToken(token, function(error, result) {
+    if (error) { 
+      console.log('Login Failed!', error); 
+    } else {
+      onValueChange = ref.on('value', function(snapshot){
+        var allCanvases = snapshot.val();
+        if (ref.getAuth() && allCanvases !== null ) {
+          for (var user in allCanvases){
+            var data = allCanvases[user];
+            var context = document.getElementsByClassName(user)[0].getContext('2d');
+            console.log(document.getElementsByClassName(user));
+            drawCanvasElement(context, data);
+          }
+        }
+      });
+    }
+  });
+};
+
 // Message Handler
 chrome.runtime.onMessage.addListener(
   function (request, sender, sendResponse){
@@ -163,31 +176,21 @@ chrome.runtime.onMessage.addListener(
     } else if ( request.getStatus === true ){
       console.log('status');
       sendResponse({status:toggle});
-
-    // Logout Messages
-    } else if (request.logout){
-      console.log('logging out')
-      removeGraffeoCanvasAll();
-
-    // Clear User Canvas Messages
-    } else if (request.clearCanvas){
-      clearUserCanvas();
+    } else if (request.updateToken) { // change in user Authentication status.
+      if (request.token === null) {
+        userLogout();
+      } else {
+        userLogin(request.token);
+      }
     }
   }
 );
 
-// Firebase Event Listener 
-ref.on('value', function(snapshot){
-  var allCanvases = snapshot.val();
-  if (ref.getAuth() && allCanvases !== null ) {
-    for (var user in allCanvases){
-      var data = allCanvases[user];
-      var context = document.getElementsByClassName(user)[0].getContext('2d');
-      console.log(document.getElementsByClassName(user));
-      drawCanvasElement(context, data);
-    }
-  } 
+// Check to see if the user is already logged in when the page loads.
+chrome.runtime.sendMessage({action: 'getToken'}, function(response) {
+  if (response.token === null) {
+    userLogout();
+  } else {
+    userLogin(response.token);
+  }
 });
-
-appendCanvasAll();
-
