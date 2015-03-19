@@ -1,6 +1,6 @@
-# Project Name
+# Graffeo.me
 
-> A lighthearted chrome extensions to personalize the web.
+A lighthearted chrome extensions to personalize the web.
 
 ## Team
 
@@ -17,23 +17,28 @@
 1. [Development](#development)
     1. [Installing Dependencies](#installing-dependencies)
     1. [Tasks](#tasks)
-1. [Team](#team)
 1. [Contributing](#contributing)
 
 ## Usage
 
-> Install, sign up, deface the web with your friends.
+Install, sign up, deface the web with your friends.
 
 ## Requirements
 
-- TBD
-- etc
+- Google Chrome
 
 ## Development
 
-### Installing Dependencies
+### Dependencies
 
-> Installing Dev Chrome Extensions
+From within the root directory:
+
+```sh
+sudo npm install -g bower
+npm install
+bower install
+```
+### Installing Dev Chrome Extensions
 
 Check this [StackOverflow](http://stackoverflow.com/questions/24577024/install-chrome-extension-not-in-the-store) for more details, basic steps below:
 
@@ -44,18 +49,9 @@ Extensions can be loaded in unpacked mode by following the following steps:
 3. Click on the "Load unpacked extension..." button.
 4. Select the directory containing your unpacked extension.
 
-> From within the root directory:
-
-```sh
-sudo npm install -g bower
-npm install
-bower install
-```
-
 ### Roadmap
 
-View the project roadmap [here](LINK_TO_PROJECT_ISSUES)
-
+View the project roadmap [here](https://github.com/graffiome/graffiome/issues)
 
 ## Contributing
 
