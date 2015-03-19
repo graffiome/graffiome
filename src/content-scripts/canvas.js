@@ -17,7 +17,7 @@ var ref = new Firebase('https://dazzling-heat-2465.firebaseio.com/web/data/sites
 var onValueChange;
 
 var getCurrentUser = function(){
-  return 'simplelogin:6'
+  return ref.getAuth() ? ref.getAuth().uid : null;
 };
 
 var saveUserCanvas = function(){
@@ -139,8 +139,8 @@ var userLogout = function() {
   removeGraffeoCanvasAll();
 };
 
-var userLogin = function() {
-  ref.authWithCustomToken(request.token, function(error, result) {
+var userLogin = function(token) {
+  ref.authWithCustomToken(token, function(error, result) {
     if (error) { 
       console.log('Login Failed!', error); 
     } else {
@@ -180,7 +180,7 @@ chrome.runtime.onMessage.addListener(
       if (request.token === null) {
         userLogout();
       } else {
-        userLogin();
+        userLogin(request.token);
       }
     }
   }
@@ -191,6 +191,6 @@ chrome.runtime.sendMessage({action: 'getToken'}, function(response) {
   if (response.token === null) {
     userLogout();
   } else {
-    userLogin();
+    userLogin(response.token);
   }
 });
