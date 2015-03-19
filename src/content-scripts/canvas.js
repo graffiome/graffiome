@@ -9,23 +9,13 @@ var canvas, ctx, flag = false,
 var lineColor = 'red',
     lineWidth = 2;
 
-var toggle = 'off',
-    showCanvasAll = true;
+var toggle = 'off';
 
 var tabUrl = CryptoJS.SHA1(document.URL),
 ref = new Firebase('https://dazzling-heat-2465.firebaseio.com/web/data/sites/' + tabUrl);
 
 var getCurrentUser = function(){
-  return ref.getAuth() ? ref.getAuth().uid : null;
-};
-
-var drawCanvasElement = function(canvasElement, data){
-  var context = canvasElement.getContext('2d');
-  var imageObj = new Image();
-  imageObj.src = data;
-  imageObj.onload = function(){
-    context.drawImage(this, 0, 0);
-  };
+  return 'simplelogin:6'
 };
 
 var saveUserCanvas = function(){
@@ -74,91 +64,82 @@ var findxy = function(res, e){
   }
 };
 
-var appendCanvasElement = function(user){
-  // Append User Canvas
-  if( user === getCurrentUser() ){
-    $('<canvas id="graffio-canvas"></canvas>')
-      .css({zIndex: 100, position: 'absolute', top: 0,left: 0})
-      .attr('width', document.body.scrollWidth)
-      .attr('height', document.body.scrollHeight)
-      .on('mousemove', function(e){findxy('move', e);})
-      .on('mousedown', function(e){findxy('down', e);})
-      .on('mouseup', function(e){
-        findxy('up', e); 
-        saveUserCanvas();
-      })
-      .on('mouseout', function(e){ findxy('out', e);})
-      .appendTo('body');
+var turnEditOn = function($canvas){
+  console.log($canvas);
+  $canvas.css({zIndex: 100, position: 'absolute', top: 0,left: 0,'pointer-events': ''})
+    .on('mousemove', function(e){findxy('move', e);})
+    .on('mousedown', function(e){findxy('down', e);})
+    .on('mouseup', function(e){
+      findxy('up', e); 
+      saveUserCanvas();
+    })
+    .on('mouseout', function(e){ findxy('out', e);})
+    .on('click')
 
-    canvas = document.getElementById('graffio-canvas');
-    ctx = canvas.getContext("2d");
-
-    console.log('user canvas injected!');
-
-  // Append Public Canvas
-  } else {
-    $('<canvas id="public"></canvas>')
-      .css({position: 'absolute', top: 0, left: 0, 'pointer-events': 'none'})
-      .attr('width', document.body.scrollWidth)
-      .attr('height', document.body.scrollHeight)
-      .attr('class', user)
-      .appendTo('body');
-
-    console.log('public canvas injected!');
-  }
+  canvas = document.getElementsByClassName(getCurrentUser())[0];
+  ctx = canvas.getContext("2d");
 };
 
-var updatePublicCanvasElements = function(snapshot){
-  var allCanvases = snapshot.val();
-  var data, publicCanvas;
+var turnEditOff = function($canvas){
+  $canvas.css({position: 'absolute', top: 0,left: 0, 'pointer-events': 'none'})
+    .off();
+};
 
-  for (var user in allCanvases){
-    if ( user !== getCurrentUser() ){
-      data = allCanvases[user];
+var appendCanvasElement = function(name){
+  $('<canvas id="graffeo-canvas"></canvas>')
+    .css({position: 'absolute', top: 0, left: 0, 'pointer-events': 'none'})
+    .attr('width', document.body.scrollWidth)
+    .attr('height', document.body.scrollHeight)
+    .attr('class', name)
+    .appendTo('body');
+};
 
-      // If user's public canvas element already exists, then update
-      if ( document.getElementsByClassName(user).length >=1 ) {
-        publicCanvas = document.getElementsByClassName(user)[0];
-        drawCanvasElement(publicCanvas, data);
+var drawCanvasElement = function(context, data){
+  var imageObj = new Image();
+  imageObj.src = data;
+  imageObj.onload = function(){
+    context.drawImage(this, 0, 0);
+  };
+};
 
-      // Else, doesn't exist already, then append and reconstruct it
-      } else {
+var appendCanvasAll = function(){
+  ref.once('value', function(snapshot){
+    var allCanvases = snapshot.val();
+    if ( allCanvases !== null ){
+      for (var user in allCanvases){
+        var data = allCanvases[user];
+        var context;
         appendCanvasElement(user);
-        publicCanvas = document.getElementsByClassName(user)[0];
-        drawCanvasElement(publicCanvas, data);
+        context = document.getElementsByClassName(user)[0].getContext('2d');
+        drawCanvasElement(context, data);
       }
     }
-  }
-};
-
-var displayPublicCanvasAll = function(){
-  ref.once('value', function(snapshot){
-    if (showCanvasAll) {
-      updatePublicCanvasElements(snapshot);
-    } 
   });
-}
+};
 
 var toggleUserCanvasOn = function(){
   if ( toggle === 'off' ) {
-    appendCanvasElement(getCurrentUser());
+    var userCanvas = $('.simplelogin\\:6');
+    console.log(userCanvas)
+    if (userCanvas.length === 0){
+      appendCanvasElement(getCurrentUser());
+      userCanvas = $('.simplelogin\\:6');
+      turnEditOn(userCanvas);
+    } else {
+      turnEditOn(userCanvas);
+    }  
     toggle = 'on';
   }
 };
 
 var toggleUserCanvasOff = function(){
-  $('canvas#graffio-canvas').remove();
+  var userCanvas = $('.simplelogin\\:6');
+  turnEditOff(userCanvas);
   toggle = 'off';
-  console.log('user canvas removed!');
 };
 
-var removePublicCanvasAll = function(){
- $('canvas#public').remove();
-};
-
-var removeCanvasAll = function(){
-  toggleUserCanvasOff();
-  removePublicCanvasAll();
+var removeGraffeoCanvasAll = function(){
+ $('canvas#graffeo-canvas').remove();
 };
 
 var clearUserCanvas = function(){
@@ -175,9 +156,8 @@ chrome.runtime.onMessage.addListener(
         toggleUserCanvasOff();
         sendResponse({confirm:'canvas turned off'});
     } else if ( request.toggle === 'on' ){
-          toggleUserCanvasOn(); 
-          displayPublicCanvasAll();
-          sendResponse({confirm:'canvas turned on'});
+        toggleUserCanvasOn(); 
+        sendResponse({confirm:'canvas turned on'});
         
     // Initialize toggle status for popup button
     } else if ( request.getStatus === true ){
@@ -187,14 +167,7 @@ chrome.runtime.onMessage.addListener(
     // Logout Messages
     } else if (request.logout){
       console.log('logging out')
-      removeCanvasAll();
-
-    // Show Public Canvases Messages
-    } else if ( request.show === 'all' ){
-      showCanvasAll = true;
-    } else if ( request.show === 'none' ){
-       showCanvasAll = false;
-       removePublicCanvasAll();
+      removeGraffeoCanvasAll();
 
     // Clear User Canvas Messages
     } else if (request.clearCanvas){
@@ -205,7 +178,16 @@ chrome.runtime.onMessage.addListener(
 
 // Firebase Event Listener 
 ref.on('value', function(snapshot){
-  if (ref.getAuth()) {
-    updatePublicCanvasElements(snapshot);
+  var allCanvases = snapshot.val();
+  if (ref.getAuth() && allCanvases !== null ) {
+    for (var user in allCanvases){
+      var data = allCanvases[user];
+      var context = document.getElementsByClassName(user)[0].getContext('2d');
+      console.log(document.getElementsByClassName(user));
+      drawCanvasElement(context, data);
+    }
   } 
 });
+
+appendCanvasAll();
+
