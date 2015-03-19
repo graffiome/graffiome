@@ -17,7 +17,7 @@ var ref = new Firebase('https://dazzling-heat-2465.firebaseio.com/web/data/sites
 var onValueChange;
 
 var getCurrentUser = function(){
-  return ref.getAuth() ? ref.getAuth().uid : null;
+  return ref.getAuth() ? ref.getAuth().uid.replace(':','') : null;
 };
 
 var saveUserCanvas = function(){
@@ -67,7 +67,6 @@ var findxy = function(res, e){
 };
 
 var turnEditOn = function($canvas){
-  console.log($canvas);
   $canvas.css({zIndex: 100, position: 'absolute', top: 0,left: 0,'pointer-events': ''})
     .on('mousemove', function(e){findxy('move', e);})
     .on('mousedown', function(e){findxy('down', e);})
@@ -79,7 +78,7 @@ var turnEditOn = function($canvas){
     .on('click')
 
   canvas = document.getElementsByClassName(getCurrentUser())[0];
-  ctx = canvas.getContext("2d");
+  ctx = canvas.getContext('2d');
 };
 
 var turnEditOff = function($canvas){
@@ -92,7 +91,7 @@ var appendCanvasElement = function(name){
     .css({position: 'absolute', top: 0, left: 0, 'pointer-events': 'none'})
     .attr('width', document.body.scrollWidth)
     .attr('height', document.body.scrollHeight)
-    .attr('class', name.replace(':',''))
+    .attr('class', name)
     .appendTo('body');
 };
 
@@ -106,11 +105,10 @@ var drawCanvasElement = function(context, data){
 
 var toggleUserCanvasOn = function(){
   if ( toggle === 'off' ) {
-    var userCanvas = $('.'+getCurrentUser().replace(':',''));
-    console.log(userCanvas)
+    var userCanvas = $('.'+ getCurrentUser());
     if (userCanvas.length === 0){
       appendCanvasElement(getCurrentUser());
-      userCanvas = $('.'+getCurrentUser().replace(':',''));
+      userCanvas = $('.'+getCurrentUser());
       turnEditOn(userCanvas);
     } else {
       turnEditOn(userCanvas);
@@ -120,7 +118,7 @@ var toggleUserCanvasOn = function(){
 };
 
 var toggleUserCanvasOff = function(){
-  var userCanvas = $('.'+getCurrentUser().replace(':',''));
+  var userCanvas = $('.'+getCurrentUser());
   turnEditOff(userCanvas);
   toggle = 'off';
 };
@@ -146,11 +144,15 @@ var userLogin = function(token) {
     } else {
       onValueChange = ref.on('value', function(snapshot){
         var allCanvases = snapshot.val();
-        if (ref.getAuth() && allCanvases !== null ) {
+        if (getCurrentUser() && allCanvases) {
           for (var user in allCanvases){
             var data = allCanvases[user];
-            var context = document.getElementsByClassName(user)[0].getContext('2d');
-            console.log(document.getElementsByClassName(user));
+            if (document.getElementsByClassName(user)[0]) {
+              var context = document.getElementsByClassName(user.replace(':',''))[0].getContext('2d');  
+            } else {
+              appendCanvasElement(user.replace(':',''));
+              context = document.getElementsByClassName(user.replace(':',''))[0].getContext('2d');
+            }
             drawCanvasElement(context, data);
           }
         }
@@ -162,8 +164,6 @@ var userLogin = function(token) {
 // Message Handler
 chrome.runtime.onMessage.addListener(
   function (request, sender, sendResponse){
-    console.log('message:', request, ' from sender: ', sender);
-
     // Toggle User Canvas Messages
     if ( request.toggle === 'off' ){
         toggleUserCanvasOff();
@@ -174,7 +174,6 @@ chrome.runtime.onMessage.addListener(
         
     // Initialize toggle status for popup button
     } else if ( request.getStatus === true ){
-      console.log('status');
       sendResponse({status:toggle});
     } else if (request.updateToken) { // change in user Authentication status.
       if (request.token === null) {
