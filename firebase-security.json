@@ -1,14 +1,16 @@
 {
   "rules": {
-    "sites": {
-      ".read": "auth != null",
-      ".write": "auth != null",
-      ".validate": "newData.isString() && newData.val().length === 40",
-      "$site": {
-        "$user": {
+    "web": {
+      "data": {
+        "sites": {
           ".read": "auth != null",
-          ".write": "$user == auth.uid",
-          ".validate": "newData.isString() && newData.val().matches(/^data:image\/png;base64\,[a-z,A-Z,0-9,\+,\/]*$/)"
+          ".write": "auth != null",
+          "$site": {
+            ".validate": "$site.length === 40 && $site.matches(/^[0-9A-Za-z]*$/)",
+            "$user": {
+              ".validate": "newData.isString() && newData.val().matches(/^data:image\\/png;base64\\,[0-9A-Za-z|\\/|\\+]*/) && !newData.val().matches(/[<|>|{|}]+/)"
+            }
+          }
         }
       }
     }
