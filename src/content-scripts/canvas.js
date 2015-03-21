@@ -162,6 +162,10 @@ var userLogin = function(token) {
   });
 };
 
+var eraseUserCanvas = function(){
+  ctx.clearRect(0, 0, canvas.width, canvas.height);
+};
+
 // Message Handler
 chrome.runtime.onMessage.addListener(
   function (request, sender, sendResponse){
@@ -182,7 +186,12 @@ chrome.runtime.onMessage.addListener(
       } else {
         userLogin(request.token);
       }
-    }
+
+    } else if (request.erase){
+      eraseUserCanvas();
+    } else if (request.changeColor){
+      lineColor = request.changeColor;
+    } 
   }
 );
 

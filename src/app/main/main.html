@@ -3,7 +3,11 @@
   <h2>Controls</h2>
 
   <button ng-click="toggleStatus()" ng-controller="onOffController">Turn Editing {{ onOffButtonTxt }}</button>
-
+  <br>
+  <button ng-click="useBlackPen()" ng-controller="paletteController">Black</button>
+  <button ng-click="useBluePen()" ng-controller="paletteController">Blue</button>
+  <button ng-click="UseRedPen()" ng-controller="paletteController">Red</button>
+  <button ng-click="erase()" ng-controller="paletteController">Erase</button>
   <br>
   <button ng-click="logout()">Log Out!</button>
 </div>
