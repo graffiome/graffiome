@@ -100,6 +100,7 @@ angular.module('graffio.mainController', [])
   };
 
   $scope.changeColor = function(event){
+    // get class name, which is the color...
     var color = angular.element(event.target).attr('class').split(' ')[0]
     getCurrentTabID(function(activeTab){
       chrome.tabs.sendMessage(activeTab, {changeColor: color}, function(res) {
