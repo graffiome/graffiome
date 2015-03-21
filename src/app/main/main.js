@@ -99,26 +99,10 @@ angular.module('graffio.mainController', [])
     });
   };
 
-  $scope.useRedPen = function(){
+  $scope.changeColor = function(event){
+    var color = angular.element(event.target).attr('class').split(' ')[0]
     getCurrentTabID(function(activeTab){
-      chrome.tabs.sendMessage(activeTab, {changeColor: 'red'}, function(res) {
-        console.log(res)
-      });
-    });
-  };
-
-  $scope.useBlackPen = function(){
-    console.log(this);
-    getCurrentTabID(function(activeTab){
-      chrome.tabs.sendMessage(activeTab, {changeColor: 'black'}, function(res) {
-        console.log(res)
-      });
-    });
-  };
-
-  $scope.useBluePen = function(){
-    getCurrentTabID(function(activeTab){
-      chrome.tabs.sendMessage(activeTab, {changeColor: 'blue'}, function(res) {
+      chrome.tabs.sendMessage(activeTab, {changeColor: color}, function(res) {
         console.log(res)
       });
     });
