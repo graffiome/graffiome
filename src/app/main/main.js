@@ -78,12 +78,11 @@ angular.module('graffio.mainController', [])
       } else {
         setStatusUi('off');
       }
-      
     });
   };
  
   console.log('initial get status called...');
-  // Initiall call to getStatus to figure out what status the page was in last.
+  // Initial call to getStatus to figure out what status the page was in last.
   getStatus(function(status) {
     setStatusUi(status);
     console.log('status set');
@@ -100,7 +99,6 @@ angular.module('graffio.mainController', [])
   };
 
   $scope.changeColor = function(event){
-    // get class name, which is the color...
     var color = angular.element(event.target).attr('class').split(' ')[0]
     getCurrentTabID(function(activeTab){
       chrome.tabs.sendMessage(activeTab, {changeColor: color}, function(res) {
@@ -109,4 +107,15 @@ angular.module('graffio.mainController', [])
     });
   };
 
+  $scope.nyan = function(){
+    getCurrentTabID(function(activeTab){
+      chrome.tabs.sendMessage(activeTab, {image: 'static/nyan.gif'}, function(res) {
+        console.log(res)
+      });
+    });
+  };
+
 });
+
+
+//

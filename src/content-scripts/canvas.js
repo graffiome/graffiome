@@ -75,7 +75,6 @@ var turnEditOn = function($canvas){
       saveUserCanvas();
     })
     .on('mouseout', function(e){ findxy('out', e);})
-    .on('click');
 
   canvas = document.getElementsByClassName(getCurrentUser())[0];
   ctx = canvas.getContext('2d');
@@ -124,6 +123,7 @@ var toggleUserCanvasOff = function(){
 };
 
 var removeGraffeoCanvasAll = function(){
+  console.log('helo remove')
  $('canvas#graffeo-canvas').remove();
 };
 
@@ -166,6 +166,22 @@ var eraseUserCanvas = function(){
   ctx.clearRect(0, 0, canvas.width, canvas.height);
 };
 
+var addImage = function(src, event){
+  var img = new Image();
+  img.setAttribute('crossOrigin', 'anonymous');
+  img.src = chrome.extension.getURL(src);
+  img.onload = function(){
+    ctx.drawImage(img, event.clientX - 25, event.clientY - 25);
+  }
+}
+
+var addOneTimeClickEvent = function(element, callback, src){
+  element.on('click', function(event){
+    callback(src, event);
+    element.off('click');
+  })
+};
+
 // Message Handler
 chrome.runtime.onMessage.addListener(
   function (request, sender, sendResponse){
@@ -191,7 +207,11 @@ chrome.runtime.onMessage.addListener(
       eraseUserCanvas();
     } else if (request.changeColor){
       lineColor = request.changeColor;
-    } 
+
+    } else if (request.image){
+      var userCanvas = $('.'+ getCurrentUser());
+      addOneTimeClickEvent(userCanvas, addImage, request.image);
+    }
   }
 );
 
