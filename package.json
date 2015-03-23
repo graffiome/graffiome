@@ -24,5 +24,10 @@
     "chai": "^2.1.2",
     "karma": "^0.12.31",
     "mocha": "^2.2.1"
+  },
+  "dependencies": {
+    "chai": "^2.1.2",
+    "mocha": "^2.2.1",
+    "sinon-chrome": "^0.1.1"
   }
 }
