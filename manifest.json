@@ -24,6 +24,7 @@
   "permissions": [
     "activeTab"
   ],
+  "web_accessible_resources": ["static/nyan.gif"],
   "browser_action": {
     "default_icon": "static/graffiome_logo_19.png",
     "default_title": "graffio.me",

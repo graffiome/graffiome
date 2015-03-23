@@ -1,4 +1,38 @@
 'use strict';
+
+// helper function to determine what the current tab is and perform a callback on that tabID value
+var getCurrentTabID = function(callback) {
+  chrome.tabs.query({currentWindow: true, active: true}, function(tabs){
+    var currentTabId = tabs[0].id;
+    callback(currentTabId);
+  });
+};
+
+// getStatus takes a callback and applies it to the status of the current tab
+// it queries the current tab for the status of the app on that tab
+var getStatus = function(callback) {
+  getCurrentTabID(function(tabID) {
+    chrome.tabs.sendMessage(tabID, {getStatus: true}, function(res) {
+      callback(res.status, tabID);
+    });
+  });
+};
+
+// generic send tab message function, telling the content script to change from
+// the current status to the opposite
+var sendTabMessage = function(status, tabID) {
+ var msg;
+ if (status === 'off') {
+   msg = 'on';
+ } else {
+   msg = 'off';
+ }
+ chrome.tabs.sendMessage(tabID, {toggle: msg}, function(res){
+   console.log('toggleStatus:', res);
+ });
+};
+
+// Begin Angular Module
 angular.module('graffio.mainController', [])
 .controller('mainController', function($scope, $state) {
   var ref = new Firebase('https://dazzling-heat-2465.firebaseio.com');
@@ -12,23 +46,7 @@ angular.module('graffio.mainController', [])
   // initialize text before we can query the current tab
   $scope.onOffButtonTxt = 'loading...';
 
-  // helper function to determine what the current tab is and perform a callback on that tabID value
-  var getCurrentTabID = function(callback) {
-    chrome.tabs.query({currentWindow: true, active: true}, function(tabs){
-      var currentTabId = tabs[0].id;
-      callback(currentTabId);
-    });
-  };
 
-  // getStatus takes a callback and applies it to the status of the current tab
-  // it queries the current tab for the status of the app on that tab
-  var getStatus = function(callback) {
-    getCurrentTabID(function(tabID) {
-      chrome.tabs.sendMessage(tabID, {getStatus: true}, function(res) {
-        callback(res.status, tabID);
-      });
-    });
-  };
 
   // generic UI update function for the status of the app
   // needs to use $scope.$apply since these callback functions otherwise wouldn't trigger a $digest event
@@ -43,20 +61,6 @@ angular.module('graffio.mainController', [])
       } else {
         $scope.onOffButtonTxt = 'Off';
       }
-    });
-  };
-
-  // generic send tab message function, telling the content script to change from
-  // the current status to the opposite
-  var sendTabMessage = function(status, tabID) {
-    var msg;
-    if (status === 'off') {
-      msg = 'on';
-    } else {
-      msg = 'off';
-    }
-    chrome.tabs.sendMessage(tabID, {toggle: msg}, function(res){
-      console.log('toggleStatus:', res);
     });
   };
     
@@ -74,14 +78,44 @@ angular.module('graffio.mainController', [])
       } else {
         setStatusUi('off');
       }
-      
     });
   };
  
   console.log('initial get status called...');
-  // Initiall call to getStatus to figure out what status the page was in last.
+  // Initial call to getStatus to figure out what status the page was in last.
   getStatus(function(status) {
     setStatusUi(status);
     console.log('status set');
   });
+
+}).controller('paletteController', function($scope){
+
+  $scope.erase = function(){
+    getCurrentTabID(function(activeTab){
+      chrome.tabs.sendMessage(activeTab, {erase: true}, function(res) {
+        console.log(res)
+      });
+    });
+  };
+
+  $scope.changeColor = function(event){
+    var color = angular.element(event.target).attr('class').split(' ')[0]
+    getCurrentTabID(function(activeTab){
+      chrome.tabs.sendMessage(activeTab, {changeColor: color}, function(res) {
+        console.log(res)
+      });
+    });
+  };
+
+  $scope.nyan = function(){
+    getCurrentTabID(function(activeTab){
+      chrome.tabs.sendMessage(activeTab, {image: 'static/nyan.gif'}, function(res) {
+        console.log(res)
+      });
+    });
+  };
+
 });
+
+
+//
