@@ -6,17 +6,9 @@ phantom.injectJs(node_modules + 'mocha/mocha.js');
 phantom.injectJs(node_modules + 'chai/chai.js');
 phantom.injectJs(node_modules + 'sinon-chrome/phantom-tweaks.js');
 
-phantom.injectJs(lib + 'jquery/dist/jquery.min.js');
-
-phantom.injectJs(lib + 'firebase/firebase.js');
-phantom.injectJs(lib + 'mockfirebase/browser/mockfirebase.js');
-phantom.injectJs(lib + 'CryptoJS/rollups/sha1.js');
-// phantom.injectJs(lib + 'CryptoJS/rollups/sha1.js');
 
 phantom.injectJs(src + 'canvas.js');
-
 mocha.setup({ui: 'bdd', reporter: 'spec'});
-
 
 phantom.injectJs('beforeeach.js');
 phantom.injectJs('canvas.test.js');
