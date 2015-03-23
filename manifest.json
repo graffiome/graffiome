@@ -30,9 +30,9 @@
     {
       "matches": ["<all_urls>"],
       "js": [
-        "src/bower_components/jquery/dist/jquery.js",
-        "src/bower_components/firebase/firebase.js",
-        "src/bower_components/CryptoJS%20v3.1.2/rollups/sha1.js",
+        "bower_components/jquery/dist/jquery.js",
+        "bower_components/firebase/firebase.js",
+        "bower_components/CryptoJS/rollups/sha1.js",
         "src/content-scripts/canvas.js"
       ]
     }
