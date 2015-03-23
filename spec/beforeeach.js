@@ -1,6 +1,7 @@
 var fs = require('fs');
 var page;
 var beforeLoadFn;
+<<<<<<< HEAD
 var src = '../src/content-scripts/';
 var lib = '../bower_components/';
 
@@ -38,6 +39,7 @@ beforeEach(function() {
     page.injectJs(lib + 'mockfirebase/browser/mockfirebase.js');
     page.injectJs(lib + 'CryptoJS/rollups/sha1.js');
     page.injectJs(src + 'canvas.js');
+
     page.evaluate(function() {
       assert = chai.assert;
 

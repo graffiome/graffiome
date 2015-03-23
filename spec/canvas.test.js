@@ -13,6 +13,7 @@ describe('Canvas Utility Functions', function() {
         return document.getElementById('graffeo-canvas') !== null
       });
       expect(hasCanvas).to.equal(true);  
+
     });
   });
 
