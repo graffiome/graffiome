@@ -8,7 +8,11 @@ describe('Canvas Utility Functions', function() {
 
   describe('appendCanvasElement', function(){
     it('should append one canvas element the body', function(){
-      appendCanvasElement();
+      var hasCanvas = page.evaluate(function() {
+        appendCanvasElement()
+        return document.getElementById('graffeo-canvas') !== null
+      });
+      expect(hasCanvas).to.equal(true);  
     });
   });
 

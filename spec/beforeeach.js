@@ -1,13 +1,10 @@
 var fs = require('fs');
 var page;
 var beforeLoadFn;
-// var MockFirebase = require('mockfirebase').MockFirebase;
-
-// console.log(MockFirebase)
+var src = '../src/content-scripts/';
+var lib = '../bower_components/';
 
 beforeEach(function() {
-
-  // MockFirebase.override();
 
   page = require('webpage').create();
 
@@ -35,6 +32,12 @@ beforeEach(function() {
     page.injectJs(node_modules + 'sinon/pkg/sinon.js');
     page.injectJs(node_modules + 'sinon-chrome/chrome.js');
     page.injectJs(node_modules + 'sinon-chrome/phantom-tweaks.js');
+
+    page.injectJs(lib + 'jquery/dist/jquery.min.js');
+    page.injectJs(lib + 'firebase/firebase.js');
+    page.injectJs(lib + 'mockfirebase/browser/mockfirebase.js');
+    page.injectJs(lib + 'CryptoJS/rollups/sha1.js');
+    page.injectJs(src + 'canvas.js');
     page.evaluate(function() {
       assert = chai.assert;
 
