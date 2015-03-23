@@ -1,9 +1,17 @@
 var fs = require('fs');
 var page;
 var beforeLoadFn;
+// var MockFirebase = require('mockfirebase').MockFirebase;
+
+// console.log(MockFirebase)
 
 beforeEach(function() {
 
+<<<<<<< HEAD
+=======
+  // MockFirebase.override();
+
+>>>>>>> working phantom test
   page = require('webpage').create();
 
   page.onConsoleMessage = function(msg) {
