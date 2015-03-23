@@ -26,6 +26,7 @@ describe('Canvas Utility Functions', function() {
   describe('clearUserCanvas', function(){
 
     it('should erase everything drawn on user canvas', function(){
+
     });
   });
 
@@ -127,7 +128,12 @@ describe('Message Handling', function() {
   describe('Erase Canvas Messages', function(){
 
     it('on request, should call erase canvas function', function(){
-     
+     var hasCanvas = page.evaluate(function() {
+       appendCanvasElement()
+       removeGraffeoCanvasAll();
+       return document.getElementById('graffeo-canvas') !== null
+     });
+     expect(hasCanvas).to.equal(false);  
     });
   });
 
