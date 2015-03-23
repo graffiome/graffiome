@@ -4,8 +4,7 @@
   "manifest_version": 2,
   "description": "deface the web",
   "homepage_url": "http://graffio.me",
-  /* This sample uses firebaseio-demo.com but for production apps using a firebaseio.com Firebase, you won't need that. */
-  "content_security_policy": "script-src 'self' https://cdn.firebase.com https://*.firebaseio.com https://ajax.googleapis.com/ https://cdnjs.cloudflare.com/ajax/libs/; object-src 'self'",
+  "content_security_policy": "script-src 'self' https://*.firebaseio.com; object-src 'self'",
   "permissions": [
     "tabs",
     "activeTab",
@@ -21,9 +20,6 @@
     "page": "src/background/background.html",
     "persistent": true
   },
-  "permissions": [
-    "activeTab"
-  ],
   "web_accessible_resources": ["static/nyan.gif"],
   "browser_action": {
     "default_icon": "static/graffiome_logo_19.png",
@@ -36,7 +32,7 @@
       "js": [
         "src/bower_components/jquery/dist/jquery.js",
         "src/bower_components/firebase/firebase.js",
-        "src/libs/sha1.js",
+        "src/bower_components/CryptoJS%20v3.1.2/rollups/sha1.js",
         "src/content-scripts/canvas.js"
       ]
     }

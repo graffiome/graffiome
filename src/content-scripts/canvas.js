@@ -129,6 +129,7 @@ var removeGraffeoCanvasAll = function(){
 
 var clearUserCanvas = function(){
   ctx.clearRectangle(0, 0, canvas.width, canvas.height);
+  saveUserCanvas();
 };
 
 var userLogout = function() {
