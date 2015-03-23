@@ -28,3 +28,4 @@ mocha.run(function(failures) {
     phantom.exit(failures);
   }, 0);
 });
+
