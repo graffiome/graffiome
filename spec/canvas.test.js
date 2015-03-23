@@ -49,6 +49,12 @@ describe('Canvas Utility Functions', function() {
   describe('removeGraffeoCanvasAll', function(){
 
     it('should remove all graffeo canvas elements from body', function(){
+      var hasCanvas = page.evaluate(function() {
+        appendCanvasElement()
+        removeGraffeoCanvasAll();
+        return document.getElementById('graffeo-canvas') !== null
+      });
+      expect(hasCanvas).to.equal(false); 
     });
   });
 });
@@ -127,12 +133,7 @@ describe('Message Handling', function() {
   describe('Erase Canvas Messages', function(){
 
     it('on request, should call erase canvas function', function(){
-     var hasCanvas = page.evaluate(function() {
-       appendCanvasElement()
-       removeGraffeoCanvasAll();
-       return document.getElementById('graffeo-canvas') !== null
-     });
-     expect(hasCanvas).to.equal(false);  
+
     });
   });
 
