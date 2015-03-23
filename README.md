@@ -1,4 +1,4 @@
-# Graffeo.me
+# Graffio.me
 
 A lighthearted chrome extensions to personalize the web.
 
