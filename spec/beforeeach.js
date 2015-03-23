@@ -1,7 +1,6 @@
 var fs = require('fs');
 var page;
 var beforeLoadFn;
-<<<<<<< HEAD
 var src = '../src/content-scripts/';
 var lib = '../bower_components/';
 
