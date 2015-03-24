@@ -6,7 +6,7 @@ A lighthearted chrome extensions to personalize the web.
 
   - __Product Owner__: koziscool
   - __Scrum Master__: wettowelreactor
-  - __Porject Manager__: mrblueblue
+  - __Project Manager__: mrblueblue
   - __Technical Lead__: rmagee88
   - __Development Team Members__: koziscool, mrblueblue, rmagee88, wettowelreactor
 
