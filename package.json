@@ -23,6 +23,8 @@
   "devDependencies": {
     "chai": "^2.1.2",
     "karma": "^0.12.31",
-    "mocha": "^2.2.1"
+    "mocha": "^2.2.1",
+    "mockfirebase": "^0.10.3",
+    "sinon-chrome": "^0.1.1"
   }
 }
