@@ -13,13 +13,14 @@ describe('Canvas Utility Functions', function() {
         return document.getElementById('graffeo-canvas') !== null
       });
       expect(hasCanvas).to.equal(true);  
-
     });
   });
 
   describe('addImage', function(){
 
     it('should add image to canvas at mouse click position', function(){
+
+
     });
   });
 
@@ -44,6 +45,15 @@ describe('Canvas Utility Functions', function() {
   describe('drawCanvasElement', function(){
 
     it('should draw correct image on user canvas', function(){
+      var src = page.evaluate(function() {
+        appendCanvasElement();
+        var canvas = document.getElementById('graffeo-canvas');
+        var context = canvas.getContext('2d')
+        drawCanvasElement(context, data)
+        return canvas.toDataURL()
+      });
+
+      expect(data.substring(1,100)).to.equal(src.substring(1,100));
     });
   });
 

@@ -37,6 +37,7 @@ beforeEach(function() {
     page.injectJs(lib + 'firebase/firebase.js');
     page.injectJs(lib + 'mockfirebase/browser/mockfirebase.js');
     page.injectJs(lib + 'CryptoJS/rollups/sha1.js');
+    page.injectJs('data.js');
     page.injectJs(src + 'canvas.js');
 
     page.evaluate(function() {
