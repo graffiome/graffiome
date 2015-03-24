@@ -9,7 +9,7 @@ phantom.injectJs(node_modules + 'sinon-chrome/phantom-tweaks.js');
 
 phantom.injectJs(src + 'canvas.js');
 mocha.setup({ui: 'bdd', reporter: 'spec'});
-
+phantom.injectJs('data.js');
 phantom.injectJs('beforeeach.js');
 phantom.injectJs('canvas.test.js');
 
