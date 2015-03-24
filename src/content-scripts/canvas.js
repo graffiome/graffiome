@@ -11,7 +11,7 @@ var lineColor = 'red',
 
 var toggle = 'off';
 
-var tabUrl = CryptoJS.SHA1(document.URL);
+var tabUrl = CryptoJS.SHA1(document.URL).toString();
 
 var ref = new Firebase('https://dazzling-heat-2465.firebaseio.com/web/data/sites/' + tabUrl);
 var onValueChange;
