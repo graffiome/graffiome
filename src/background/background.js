@@ -41,7 +41,7 @@ var registerSite = function(site) {
         }
       });
   } else {
-    registeredSites[site] += 1;
+    registeredSites[site].count += 1;
     ref.child(site).once('value', function (snapshot) {
       var FBData = snapshot.val();
       for (var user in FBData) {
