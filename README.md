@@ -1,6 +1,6 @@
 # Graffio.me
 
-A lighthearted chrome extensions to personalize the web.
+A lighthearted chrome extension to personalize the web.
 
 ## Team
 
