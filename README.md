@@ -2,6 +2,8 @@
 
 A lighthearted chrome extension to personalize the web.
 
+[Chrome Web Store Link](https://chrome.google.com/webstore/detail/graffiome/jamdablhdidngipicmklfejomblfdkcf)
+
 ## Team
 
   - __Product Owner__: koziscool
